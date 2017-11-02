@@ -19,12 +19,3 @@ test_that("expect_nrow() validates input", {
   expect_error(expect_nrow(iris, 1:2), "length")
   expect_error(expect_nrow(1:10, 1), "does not have rows")
 })
-
-
-
-
-
-
-
-
-
