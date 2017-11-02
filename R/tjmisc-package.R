@@ -1,8 +1,27 @@
 #' @keywords internal
+#' @import dplyr
+#' @importFrom utils modifyList
 "_PACKAGE"
 
+# This is where I put as-yet unsupported helpers.
 
 
+
+
+
+
+
+wrap_with_defaults <- function(func, hard_defaults, soft_defaults) {
+  soft_defaults <- force(soft_defaults)
+  hard_defaults <- force(hard_defaults)
+  function(...) {
+    dots <- list(...)
+    # overwrite soft defaults with user options
+    # then overwrite with hard defaults
+    args <- modifyList(modifyList(soft_defaults, dots), hard_defaults)
+    do.call(func, args)
+  }
+}
 
 #' Create a sequence along the rows of a dataframe
 #' @param data a dataframe
@@ -13,12 +32,12 @@ seq_along_rows <- function(data) {
 }
 
 
-fct_add_counts <- function(f) {
-  counts <- forcats::fct_count(f)
-  counts[["new"]] <- sprintf("%s (%s)", counts[["f"]], counts[["n"]])
-  x <- setNames(counts[["new"]], counts[["f"]])
-  forcats::fct_relabel(f, function(level) x[level])
-}
+# fct_add_counts <- function(f) {
+#   counts <- forcats::fct_count(f)
+#   counts[["new"]] <- sprintf("%s (%s)", counts[["f"]], counts[["n"]])
+#   x <- setNames(counts[["new"]], counts[["f"]])
+#   forcats::fct_relabel(f, function(level) x[level])
+# }
 
 
 #' Resequence a set of integer indices
@@ -37,5 +56,5 @@ fct_add_counts <- function(f) {
 resequence <- function(xs) {
   keys <- sort(unique(xs))
   values <- seq_along(keys)
-  unname(setNames(values, keys)[as.character(xs)])
+  unname(rlang::set_names(values, keys)[as.character(xs)])
 }

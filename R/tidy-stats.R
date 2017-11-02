@@ -32,20 +32,20 @@ tidy_quantile.default <- function(data, var, probs = seq(.1, .9, .2)) {
 tidy_quantile.grouped_df <- function(data, var, probs = seq(.1, .9, .2)) {
   q <- enquo(var)
 
-  groups <- split(data, dplyr::group_indices(data)) %>%
-    lapply(dplyr::select, !!! dplyr::group_vars(data)) %>%
-    lapply(dplyr::distinct) %>%
-    lapply(dplyr::ungroup) %>%
-    dplyr::bind_rows(.id = "....id")
+  groups <- split(data, group_indices(data)) %>%
+    lapply(select, !!! group_vars(data)) %>%
+    lapply(distinct) %>%
+    lapply(ungroup) %>%
+    bind_rows(.id = "....id")
 
-  quantiles <- split(data, dplyr::group_indices(data)) %>%
-    lapply(dplyr::ungroup) %>%
+  quantiles <- split(data, group_indices(data)) %>%
+    lapply(ungroup) %>%
     lapply(tidy_quantile.default, !! q, probs) %>%
-    dplyr::bind_rows(.id = "....id")
+    bind_rows(.id = "....id")
 
   groups %>%
-    dplyr::left_join(quantiles, by = "....id") %>%
-    dplyr::select(-dplyr::one_of("....id"))
+    left_join(quantiles, by = "....id") %>%
+    select(-one_of("....id"))
 }
 
 
@@ -77,19 +77,19 @@ tidy_correlation <- function(data, ..., type = c("pearson", "spearman")) {
 #' @export
 tidy_correlation.grouped_df <- function(data, ..., type = c("pearson", "spearman")) {
   data %>%
-    dplyr::do(tidy_correlation.default(., ..., type = type)) %>%
-    dplyr::ungroup()
+    do(tidy_correlation.default(.data, ..., type = type)) %>%
+    ungroup()
 }
 
 #' @export
 tidy_correlation.default <- function(data, ..., type = c("pearson", "spearman")) {
-  dplyr::select(data, ...) %>%
+  select(data, ...) %>%
     as.matrix() %>%
     Hmisc::rcorr(type = type) %>%
     broom::tidy() %>%
     tibble::remove_rownames() %>%
     tibble::as_tibble() %>%
-    dplyr::mutate_at(c("column1", "column2"), as.character) %>%
-    dplyr::mutate_if(is.numeric, round, 4)
+    mutate_at(c("column1", "column2"), as.character) %>%
+    mutate_if(is.numeric, round, 4)
 }
 

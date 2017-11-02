@@ -146,6 +146,56 @@ iris %>%
 #> 3  virginica Petal.Length Petal.Width   0.3221    50  0.0225
 ```
 
+<!-- ### Pairwise comparisons -->
+<!-- `compare_pairs()` compares all pairs of values among levels of a categorical -->
+<!-- variable. Hmmm, that sounds confusing. Here's an example. We compute the -->
+<!-- difference in average score between each pair of workers. -->
+<!-- ```{r} -->
+<!-- to_compare <- nlme::Machines %>% -->
+<!--   group_by(Worker) %>% -->
+<!--   summarise(avg_score = mean(score)) %>% -->
+<!--   print() -->
+<!-- to_compare %>% -->
+<!--   compare_pairs(Worker, avg_score) %>% -->
+<!--   rename(difference = value) %>% -->
+<!--   mutate_if(is.numeric, round, 1) -->
+<!-- ``` -->
+<!-- I use it to compute posterior differences in Bayesian models. For example, let's -->
+<!-- fit a Bayesian model of average sepal length for each species in `iris`. -->
+<!-- ```{r, results = "hide"} -->
+<!-- library(rstanarm) -->
+<!-- m <- stan_glm( -->
+<!--   Sepal.Length ~ Species - 1, -->
+<!--   iris, -->
+<!--   family = gaussian, -->
+<!--   prior = normal(0, 1), -->
+<!--   prior_intercept = normal(0, 1)) -->
+<!-- ``` -->
+<!-- Now, we have a posterior distributions of species means. -->
+<!-- ```{r} -->
+<!-- newdata <- data.frame(Species = unique(iris$Species)) -->
+<!-- p_means <- posterior_linpred(m, newdata = newdata) %>% -->
+<!--   as.data.frame() %>% -->
+<!--   tibble::as_tibble() %>% -->
+<!--   setNames(newdata$Species) %>% -->
+<!--   tibble::rowid_to_column("draw") %>% -->
+<!--   tidyr::gather(species, mean, -draw) %>% -->
+<!--   print() -->
+<!-- ``` -->
+<!-- For each posterior sample, we can compute pairwise differences of means. -->
+<!-- ```{r pairs, fig.width = 4, fig.height = 2.5} -->
+<!-- pair_diffs <- compare_pairs(data, species, mean) %>% -->
+<!--   print() -->
+<!-- library(ggplot2) -->
+<!-- ggplot(pair_diffs) + -->
+<!--   aes(x = pair, y = value) + -->
+<!--   stat_summary(fun.data = median_hilow, geom = "linerange") + -->
+<!--   stat_summary(fun.data = median_hilow, fun.args = list(conf.int = .8), -->
+<!--                size = 2, geom = "linerange") + -->
+<!--   stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") + -->
+<!--   labs(x = NULL, y = "Difference in posterior means") + -->
+<!--   coord_flip() -->
+<!-- ``` -->
 ### Et cetera
 
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary file and then opens it in the system viewer. If you've ever found yourself in a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going back to RStudio, tweaking the height or width or plot theme, ever so slowly spiraling in on your desired plot, then `ggpreview()` is for you.
