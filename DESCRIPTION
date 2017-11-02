@@ -7,7 +7,7 @@ Description: This package contains the helper functions used for my dissertation
 License: GPL-3
 URL: https://github.com/tjmahr/tjmisc
 BugReports: https://github.com/tjmahr/tjmisc/issues
-Imports: 
+Imports:
     broom,
     dplyr,
     ggplot2,
@@ -16,7 +16,8 @@ Imports:
     magrittr,
     rlang,
     testthat,
-    tibble
+    tibble,
+    tidyr
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

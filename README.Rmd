@@ -91,23 +91,23 @@ iris %>%
   tidy_correlation(dplyr::starts_with("Petal"))
 ```
 
-<!-- ### Pairwise comparisons -->
+### Pairwise comparisons
 
-<!-- `compare_pairs()` compares all pairs of values among levels of a categorical -->
-<!-- variable. Hmmm, that sounds confusing. Here's an example. We compute the -->
-<!-- difference in average score between each pair of workers. -->
+`compare_pairs()` compares all pairs of values among levels of a categorical
+variable. Hmmm, that sounds confusing. Here's an example. We compute the
+difference in average score between each pair of workers.
 
-<!-- ```{r} -->
-<!-- to_compare <- nlme::Machines %>% -->
-<!--   group_by(Worker) %>% -->
-<!--   summarise(avg_score = mean(score)) %>% -->
-<!--   print() -->
+```{r}
+to_compare <- nlme::Machines %>%
+  group_by(Worker) %>%
+  summarise(avg_score = mean(score)) %>%
+  print()
 
-<!-- to_compare %>% -->
-<!--   compare_pairs(Worker, avg_score) %>% -->
-<!--   rename(difference = value) %>% -->
-<!--   mutate_if(is.numeric, round, 1) -->
-<!-- ``` -->
+to_compare %>%
+  compare_pairs(Worker, avg_score) %>%
+  rename(difference = value) %>%
+  mutate_if(is.numeric, round, 1)
+```
 
 <!-- I use it to compute posterior differences in Bayesian models. For example, let's -->
 <!-- fit a Bayesian model of average sepal length for each species in `iris`. -->

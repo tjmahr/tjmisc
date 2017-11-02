@@ -53,3 +53,61 @@ sample_n_of <- function(data, size, ...) {
 
   data[subset, ]
 }
+
+
+#' Compare pairs of categorical variables
+#' @param data a dataframe
+#' @param levels a column with a categorical variable. All pairs of values in
+#'   `levels` will be compared.
+#' @param values a column with values to compare.
+#' @param f comparison function to apply to values in each pair. Defaults to `-`
+#'   to compute the pairwise differences.
+#' @return a dataframe with pairwise comparisons
+#' @export
+#' @examples
+#' to_compare <- nlme::Machines %>%
+#'   dplyr::group_by(Worker) %>%
+#'   dplyr::summarise(avg_score = mean(score)) %>%
+#'   print()
+#'
+#' to_compare %>%
+#'   compare_pairs(Worker, avg_score) %>%
+#'   dplyr::rename(difference = value) %>%
+#'   dplyr::mutate_if(is.numeric, round, 1)
+compare_pairs <- function(data, levels, values, f = `-`) {
+  levels <- enquo(levels)
+  values <- enquo(values)
+
+  pairs <- data %>%
+    pull(!! levels) %>%
+    create_pairs()
+
+  wide <- data %>%
+    tidyr::spread(data, !! levels, !! values)
+
+  for (row_i in seq_len(nrow(pairs))) {
+    pair_i <- pairs[row_i, ]
+    wide[, pair_i$name] <- f(wide[[pair_i$x1]], wide[[pair_i$x2]])
+  }
+
+  wide %>%
+    select(-one_of(c(pairs$x1), c(pairs$x2))) %>%
+    tidyr::gather("pair", "value", one_of(c(pairs$name))) %>%
+    mutate(pair = factor(.data$pair, levels = pairs$name))
+}
+
+
+#' @importFrom utils combn
+create_pairs <- function(xs) {
+  if (!is.factor(xs)) xs <- ordered(xs)
+  xs %>%
+    levels() %>%
+    rev() %>%
+    combn(2) %>%
+    t() %>%
+    as.data.frame() %>%
+    rlang::set_names("x1", "x2") %>%
+    mutate(name = paste0(.data$x1, "-", .data$x2)) %>%
+    mutate_all(as.character) %>%
+    arrange(x1, desc(x2))
+}
