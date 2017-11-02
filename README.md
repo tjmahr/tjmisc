@@ -10,6 +10,8 @@ Apologies in advance. I think "misc" packages are kind of bad because packages s
 Examples
 --------
 
+### Sample groups of data
+
 `sample_n_of()` is like dplyr's `sample_n()` but it samples groups.
 
 ``` r
@@ -24,58 +26,51 @@ data <- tibble::tibble(
   block = letters[1:5] %>% rep(10) %>% sort() %>% rep(2),
   value = rnorm(100) %>% round(2))
 
-# data from 2 days
-sample_n_of(data, 2, day)
-#> # A tibble: 20 x 4
+# data from 3 days
+sample_n_of(data, 3, day)
+#> # A tibble: 30 x 4
 #>      day    id block value
 #>    <int> <int> <chr> <dbl>
-#>  1     8     1     c  0.87
-#>  2     8     2     c  0.31
-#>  3     8     3     c -1.73
-#>  4     8     4     c -1.49
-#>  5     8     5     c  0.38
-#>  6     8     6     c  0.20
-#>  7     8     7     c -1.87
-#>  8     8     8     c  2.02
-#>  9     8     9     c  1.36
-#> 10     8    10     c  0.94
-#> 11    10     1     e  0.64
-#> 12    10     2     e -0.76
-#> 13    10     3     e -1.68
-#> 14    10     4     e -1.86
-#> 15    10     5     e  1.02
-#> 16    10     6     e  0.12
-#> 17    10     7     e  0.35
-#> 18    10     8     e  0.43
-#> 19    10     9     e -0.43
-#> 20    10    10     e -1.71
+#>  1     2     1     b  1.01
+#>  2     2     2     b  1.28
+#>  3     2     3     b -1.40
+#>  4     2     4     b -0.46
+#>  5     2     5     b  0.98
+#>  6     2     6     b  2.05
+#>  7     2     7     b  0.11
+#>  8     2     8     b  0.15
+#>  9     2     9     b  0.18
+#> 10     2    10     b -1.54
+#> # ... with 20 more rows
 
 # data from 1 id
 sample_n_of(data, 1, id)
 #> # A tibble: 10 x 4
 #>      day    id block value
 #>    <int> <int> <chr> <dbl>
-#>  1     1     2     a -0.01
-#>  2     2     2     b  1.28
-#>  3     3     2     c -0.29
-#>  4     4     2     d  0.49
-#>  5     5     2     e -0.39
-#>  6     6     2     a  0.22
-#>  7     7     2     b  0.30
-#>  8     8     2     c  0.31
-#>  9     9     2     d -1.11
-#> 10    10     2     e -0.76
+#>  1     1     1     a -0.51
+#>  2     2     1     b  1.01
+#>  3     3     1     c -0.06
+#>  4     4     1     d  1.14
+#>  5     5     1     e  0.47
+#>  6     6     1     a  0.26
+#>  7     7     1     b  1.15
+#>  8     8     1     c  0.87
+#>  9     9     1     d  0.69
+#> 10    10     1     e  0.64
 
 # data from 2 block-id pairs
 sample_n_of(data, 2, block, id)
 #> # A tibble: 4 x 4
 #>     day    id block value
 #>   <int> <int> <chr> <dbl>
-#> 1     1     5     a  0.72
-#> 2     4     9     d -0.31
-#> 3     6     5     a -0.21
-#> 4     9     9     d  0.92
+#> 1     2     2     b  1.28
+#> 2     4    10     d -2.81
+#> 3     7     2     b  0.30
+#> 4     9    10     d -0.64
 ```
+
+### Tidy quantiles
 
 `tidy_quantile()` returns a dataframe with quantiles for a given variable. I like to use it to select values for plotting model predictions.
 
@@ -113,5 +108,7 @@ iris %>%
 #> 14  virginica      70%         5.80
 #> 15  virginica      90%         6.31
 ```
+
+### Et cetera
 
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary file and then opens it in the system viewer. If you've ever found yourself in a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going back to RStudio, tweaking the height or width or plot theme, ever so slowly spiraling in on your desired plot, then `ggpreview()` is for you.

@@ -28,6 +28,8 @@ true, but using `library(helpers)` is much, much better than using
 
 ## Examples
 
+### Sample groups of data
+
 `sample_n_of()` is like dplyr's `sample_n()` but it samples groups. 
 
 ```{r example}
@@ -41,8 +43,8 @@ data <- tibble::tibble(
   block = letters[1:5] %>% rep(10) %>% sort() %>% rep(2),
   value = rnorm(100) %>% round(2))
 
-# data from 2 days
-sample_n_of(data, 2, day)
+# data from 3 days
+sample_n_of(data, 3, day)
 
 # data from 1 id
 sample_n_of(data, 1, id)
@@ -50,6 +52,8 @@ sample_n_of(data, 1, id)
 # data from 2 block-id pairs
 sample_n_of(data, 2, block, id)
 ```
+
+### Tidy quantiles
 
 `tidy_quantile()` returns a dataframe with quantiles for a given variable. I
 like to use it to select values for plotting model predictions.
@@ -62,6 +66,8 @@ iris %>%
   group_by(Species) %>% 
   tidy_quantile(Petal.Length)
 ```
+
+### Et cetera
 
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary
 file and then opens it in the system viewer. If you've ever found yourself in
