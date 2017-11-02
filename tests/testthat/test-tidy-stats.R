@@ -45,3 +45,42 @@ test_that("tidy_quantile() respects grouped data", {
   expect_equal(qs2$values, results2$mpg)
   expect_equal(qs2$names, results2$quantile)
 })
+
+
+
+test_that("tidy_correlation() calculates correlations", {
+  ncors <- sum(lower.tri(cor(iris[-5])))
+
+  results <- tidy_correlation(iris, -Species)
+
+  cor_row <- function(x, y) cor(iris[[x]], iris[[y]]) %>% round(4)
+  cors <- Map(cor_row, results$column1, results$column2) %>%
+    unlist(use.names = FALSE)
+
+  expect_equal(results$estimate, cors)
+  expect_nrow(results, ncors)
+})
+
+test_that("tidy_correlation() respects grouped data", {
+  ncors <- sum(lower.tri(cor(iris[-5])))
+
+  results <- iris %>%
+    dplyr::group_by(Species) %>%
+    tidy_correlation(-Species)
+
+  cor_row <- function(s, x, y) {
+    these <- iris[iris$Species == s, ]
+    cor(these[[x]], these[[y]]) %>% round(4)
+  }
+
+  cors <- Map(cor_row, results$Species, results$column1, results$column2) %>%
+    unlist(use.names = FALSE)
+
+  expect_equal(results$estimate, cors)
+
+  # check that right number of correlations are calculated in each group
+  expect_nrow(results, ncors * 3)
+})
+
+
+

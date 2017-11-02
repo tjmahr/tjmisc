@@ -47,3 +47,49 @@ tidy_quantile.grouped_df <- function(data, var, probs = seq(.1, .9, .2)) {
     dplyr::left_join(quantiles, by = "....id") %>%
     dplyr::select(-dplyr::one_of("....id"))
 }
+
+
+
+
+#' Generate tidy correlations
+#'
+#' This function respects groupings from `dplyr::group_by()`. When the dataframe
+#' contains grouped data, the correlations are computed within each subgroup of
+#' data.
+#'
+#' @param data a dataframe
+#' @param ... columns to select, using `dplyr::select()` semantics.
+#' @param type type of correlation, either `"pearson"` (the default) or
+#'   `"spearman"`.
+#' @return a long dataframe (a tibble) with correlations calculated for each
+#'   pair of columns.
+#' @export
+#' @examples
+#' tidy_correlation(iris, -Species)
+#'
+#' iris %>%
+#'   dplyr::group_by(Species) %>%
+#'   tidy_correlation(dplyr::starts_with("Petal"))
+tidy_correlation <- function(data, ..., type = c("pearson", "spearman")) {
+  UseMethod("tidy_correlation")
+}
+
+#' @export
+tidy_correlation.grouped_df <- function(data, ..., type = c("pearson", "spearman")) {
+  data %>%
+    dplyr::do(tidy_correlation.default(., ..., type = type)) %>%
+    dplyr::ungroup()
+}
+
+#' @export
+tidy_correlation.default <- function(data, ..., type = c("pearson", "spearman")) {
+  dplyr::select(data, ...) %>%
+    as.matrix() %>%
+    Hmisc::rcorr(type = type) %>%
+    broom::tidy() %>%
+    tibble::remove_rownames() %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate_at(c("column1", "column2"), as.character) %>%
+    dplyr::mutate_if(is.numeric, round, 4)
+}
+

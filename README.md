@@ -7,6 +7,16 @@ The goal of tjmisc is to gather miscellaneous helper functions, mostly for use i
 
 Apologies in advance. I think "misc" packages are kind of bad because packages should be focused on specific problems: for example, my helper packages for [working on polynomials](https://github.com/tjmahr/polypoly), [printing numbers](https://github.com/tjmahr/printy) or [tidying MCMC samples](https://github.com/tjmahr/tristan). Having modular code snapping together like Lego blocks is better than a grab-bag of functions, it's true, but using `library(helpers)` is much, much better than using `source("helpers.R")`. So here we are... in the grab-bag.
 
+Installation
+------------
+
+You can install the tjmisc from github with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("tjmahr/tjmisc")
+```
+
 Examples
 --------
 
@@ -107,6 +117,33 @@ iris %>%
 #> 13  virginica      50%         5.55
 #> 14  virginica      70%         5.80
 #> 15  virginica      90%         6.31
+```
+
+### Tidy correlations
+
+`tidy_correlation()` calculates correlations between pairs of selected dataframe columns. It accepts `dplyr::select()` selection semantics, and it respects grouped dataframes.
+
+``` r
+tidy_correlation(iris, -Species)
+#> # A tibble: 6 x 5
+#>        column1      column2 estimate     n p.value
+#>          <chr>        <chr>    <dbl> <dbl>   <dbl>
+#> 1 Sepal.Length  Sepal.Width  -0.1176   150  0.1519
+#> 2 Sepal.Length Petal.Length   0.8718   150  0.0000
+#> 3  Sepal.Width Petal.Length  -0.4284   150  0.0000
+#> 4 Sepal.Length  Petal.Width   0.8179   150  0.0000
+#> 5  Sepal.Width  Petal.Width  -0.3661   150  0.0000
+#> 6 Petal.Length  Petal.Width   0.9629   150  0.0000
+
+iris %>%
+  dplyr::group_by(Species) %>%
+  tidy_correlation(dplyr::starts_with("Petal"))
+#> # A tibble: 3 x 6
+#>      Species      column1     column2 estimate     n p.value
+#>       <fctr>        <chr>       <chr>    <dbl> <dbl>   <dbl>
+#> 1     setosa Petal.Length Petal.Width   0.3316    50  0.0186
+#> 2 versicolor Petal.Length Petal.Width   0.7867    50  0.0000
+#> 3  virginica Petal.Length Petal.Width   0.3221    50  0.0225
 ```
 
 ### Et cetera

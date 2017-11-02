@@ -26,6 +26,16 @@ snapping together like Lego blocks is better than a grab-bag of functions, it's
 true, but using `library(helpers)` is much, much better than using
 `source("helpers.R")`. So here we are... in the grab-bag.
 
+
+## Installation
+
+You can install the tjmisc from github with:
+
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("tjmahr/tjmisc")
+```
+
 ## Examples
 
 ### Sample groups of data
@@ -66,6 +76,21 @@ iris %>%
   group_by(Species) %>% 
   tidy_quantile(Petal.Length)
 ```
+
+### Tidy correlations
+
+`tidy_correlation()` calculates correlations between pairs of selected dataframe
+columns. It accepts `dplyr::select()` selection semantics, and it respects
+grouped dataframes.
+
+```{r}
+tidy_correlation(iris, -Species)
+
+iris %>%
+  dplyr::group_by(Species) %>%
+  tidy_correlation(dplyr::starts_with("Petal"))
+```
+
 
 ### Et cetera
 
