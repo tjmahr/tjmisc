@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-"
 )
 ```
+
 # tjmisc
 
 The goal of tjmisc is to ...

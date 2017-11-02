@@ -7,7 +7,11 @@ Description: This package contains the helper functions used for my dissertation
 License: GPL-3
 Imports: 
     magrittr,
-    rlang (>= 0.1.2)
+    rlang,
+    glue,
+    dplyr,
+    tibble,
+    testthat
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
