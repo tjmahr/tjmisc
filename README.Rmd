@@ -51,6 +51,18 @@ sample_n_of(data, 1, id)
 sample_n_of(data, 2, block, id)
 ```
 
+`tidy_quantile()` returns a dataframe with quantiles for a given variable. I
+like to use it to select values for plotting model predictions.
+
+```{r}
+iris %>% 
+  tidy_quantile(Petal.Length)
+
+iris %>% 
+  group_by(Species) %>% 
+  tidy_quantile(Petal.Length)
+```
+
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary
 file and then opens it in the system viewer. If you've ever found yourself in
 a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going

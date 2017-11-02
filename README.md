@@ -77,4 +77,41 @@ sample_n_of(data, 2, block, id)
 #> 4     9     9     d  0.92
 ```
 
+`tidy_quantile()` returns a dataframe with quantiles for a given variable. I like to use it to select values for plotting model predictions.
+
+``` r
+iris %>% 
+  tidy_quantile(Petal.Length)
+#> # A tibble: 5 x 2
+#>   quantile Petal.Length
+#>      <chr>        <dbl>
+#> 1      10%         1.40
+#> 2      30%         1.70
+#> 3      50%         4.35
+#> 4      70%         5.00
+#> 5      90%         5.80
+
+iris %>% 
+  group_by(Species) %>% 
+  tidy_quantile(Petal.Length)
+#> # A tibble: 15 x 3
+#>       Species quantile Petal.Length
+#>        <fctr>    <chr>        <dbl>
+#>  1     setosa      10%         1.30
+#>  2     setosa      30%         1.40
+#>  3     setosa      50%         1.50
+#>  4     setosa      70%         1.50
+#>  5     setosa      90%         1.70
+#>  6 versicolor      10%         3.59
+#>  7 versicolor      30%         4.00
+#>  8 versicolor      50%         4.35
+#>  9 versicolor      70%         4.50
+#> 10 versicolor      90%         4.80
+#> 11  virginica      10%         4.90
+#> 12  virginica      30%         5.10
+#> 13  virginica      50%         5.55
+#> 14  virginica      70%         5.80
+#> 15  virginica      90%         6.31
+```
+
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary file and then opens it in the system viewer. If you've ever found yourself in a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going back to RStudio, tweaking the height or width or plot theme, ever so slowly spiraling in on your desired plot, then `ggpreview()` is for you.
