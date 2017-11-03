@@ -9,6 +9,46 @@
 
 
 
+#' Filter out strings that match a pattern
+#' @param string Input vector. Either a character vector, or something coercible
+#'   to one.
+#' @param pattern Pattern to look for
+#' @return A character vector of strings that don't match the pattern.
+#' @noRd
+# str_reject <- function(string, pattern) {
+#   matches <- Negate(stringr::str_detect)(string, pattern)
+#   string[matches]
+# }
+
+
+# Is x[n] the same as x[n-1]
+is_same_as_last <- function(xs) {
+  same_as_last <- xs == lag(xs)
+  # Overwrite NA (first lag) from lag(xs)
+  same_as_last[1] <- FALSE
+  same_as_last
+}
+
+replace_same_as_last <- function(xs, replacement = "") {
+  xs[is_same_as_last(xs)] <- replacement
+  xs
+}
+
+## Actually dplyr has stronger versions of these
+# first <- function(...) head(..., n = 1)
+# last <- function(...) tail(..., n = 1)
+
+## But not this
+# but_last <- function(...) head(..., n = -1)
+
+length_zero <- function(x) length(x) == 0
+length_one <- function(x) length(x) == 1
+
+
+# is.error <- function(x) inherits(x, "try-error")
+# `%contains%` <- function(x, y) any(y %in% x)
+# `%lacks%` <- function(x, y) !any(y %in% x)
+# is_all_na <- function(x) all(is.na(x))
 
 
 wrap_with_defaults <- function(func, hard_defaults, soft_defaults) {
@@ -23,12 +63,11 @@ wrap_with_defaults <- function(func, hard_defaults, soft_defaults) {
   }
 }
 
-#' Create a sequence along the rows of a dataframe
-#' @param data a dataframe
-#' @return a sequence of integers along the rows of a dataframe
-#' @noRd
-seq_along_rows <- function(data) {
-  seq_len(nrow(data))
+
+
+merge_lists <- function(x, y) {
+  x[names(y)] <- y
+  x
 }
 
 

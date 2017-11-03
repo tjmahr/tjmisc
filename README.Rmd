@@ -109,18 +109,40 @@ to_compare %>%
   mutate_if(is.numeric, round, 1)
 ```
 
-I have used it to compute posterior differences in Bayesian models. For the sake
-of example, let's fit a Bayesian model of average sepal length for each species
-in `iris`.
+### Et cetera
+
+`ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary
+file and then opens it in the system viewer. If you've ever found yourself in
+a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going
+back to RStudio, tweaking the height or width or plot theme, ever so slowly
+spiraling in on your desired plot, then `ggpreview()` is for you.
+
+`seq_along_rows()` saves a few keystrokes in for-loops that iterate over
+dataframe rows.
+
+```{r}
+cars %>% head(5) %>% seq_along_rows()
+cars %>% head(0) %>% seq_along_rows()
+```
+
+
+## More involved demos
+
+These are things that I would have used in the demo above but cut and moved
+down here to keep that overview succinct.
+
+### Comparing pairs of values over a posterior distribution
+
+I wrote `compare_pairs()` to compute posterior differences in Bayesian models.
+For the sake of example, let's fit a Bayesian model of average sepal length for
+each species in `iris`. We could get these estimates more directly using the default dummy-coding of factors, but let's ignore that for now.
 
 ```{r, results = "hide"}
 library(rstanarm)
 m <- stan_glm(
   Sepal.Length ~ Species - 1,
   iris,
-  family = gaussian,
-  prior = normal(0, 1),
-  prior_intercept = normal(0, 1))
+  family = gaussian)
 ```
 
 Now, we have a posterior distribution of species means.
@@ -164,6 +186,9 @@ m3 <- update(m, Sepal.Length ~ Species,
              data = iris %>% mutate(Species = forcats::fct_rev(Species)))
 ```
 
+Give or take a few decimals of precision and give or take changes in signs
+because of changes in who was subtracted from whom.
+
 ```{r}
 # setosa verus others
 m2 %>% 
@@ -184,12 +209,4 @@ pair_diffs %>%
   round(2)
 ```
 
-
-### Et cetera
-
-`ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary
-file and then opens it in the system viewer. If you've ever found yourself in
-a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going
-back to RStudio, tweaking the height or width or plot theme, ever so slowly
-spiraling in on your desired plot, then `ggpreview()` is for you.
 

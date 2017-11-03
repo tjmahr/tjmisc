@@ -84,3 +84,23 @@ test_that("compare_pairs() calculates differences in pairs", {
   pair_names <- make_pairs_hard_way(names(by_hand))
   expect_true(all(pair_names %in% as.character(result$pair)))
 })
+
+
+
+test_that("seq_along_rows() returns a sequence along dataframe rows", {
+  # check lengths
+  iris %>%
+    seq_along_rows() %>%
+    expect_length(nrow(iris))
+
+  iris[0, ] %>%
+    seq_along_rows() %>%
+    expect_length(0)
+
+  # check values
+  iris[20:11, ] %>%
+    seq_along_rows() %>%
+    expect_equal(1:10)
+})
+
+

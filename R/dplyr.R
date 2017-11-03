@@ -1,3 +1,13 @@
+# Dataframe related helpers
+
+
+#' Create a sequence along the rows of a dataframe
+#' @param data a dataframe
+#' @return a sequence of integers along the rows of a dataframe
+#' @export
+seq_along_rows <- function(data) {
+  seq_len(nrow(data))
+}
 
 #' Randomly sample data from n sub-groups of data
 #'
@@ -34,8 +44,8 @@ sample_n_of <- function(data, size, ...) {
   }
 
   rows[, "group"] <- data %>%
-    dplyr::group_by(!!! dots) %>%
-    dplyr::group_indices()
+    group_by(!!! dots) %>%
+    group_indices()
 
   n_groups <- max(rows$group)
 
@@ -48,8 +58,8 @@ sample_n_of <- function(data, size, ...) {
   }
 
   subset <- rows %>%
-    dplyr::filter(.data$group %in% sample(unique(.data$group), size)) %>%
-    dplyr::pull(.data$row)
+    filter(.data$group %in% sample(unique(.data$group), size)) %>%
+    pull(.data$row)
 
   data[subset, ]
 }
@@ -85,7 +95,7 @@ compare_pairs <- function(data, levels, values, f = `-`) {
   wide <- data %>%
     tidyr::spread(key = !! levels, value = !! values)
 
-  for (row_i in seq_len(nrow(pairs))) {
+  for (row_i in seq_along_rows(pairs)) {
     pair_i <- pairs[row_i, ]
     wide[, pair_i$name] <- f(wide[[pair_i$x1]], wide[[pair_i$x2]])
   }
@@ -109,5 +119,7 @@ create_pairs <- function(xs) {
     rlang::set_names("x1", "x2") %>%
     mutate(name = paste0(.data$x1, "-", .data$x2)) %>%
     mutate_all(as.character) %>%
-    arrange(x1, desc(x2))
+    arrange(.data$x1, desc(.data$x2))
 }
+
+

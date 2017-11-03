@@ -146,56 +146,187 @@ iris %>%
 #> 3  virginica Petal.Length Petal.Width   0.3221    50  0.0225
 ```
 
-<!-- ### Pairwise comparisons -->
-<!-- `compare_pairs()` compares all pairs of values among levels of a categorical -->
-<!-- variable. Hmmm, that sounds confusing. Here's an example. We compute the -->
-<!-- difference in average score between each pair of workers. -->
-<!-- ```{r} -->
-<!-- to_compare <- nlme::Machines %>% -->
-<!--   group_by(Worker) %>% -->
-<!--   summarise(avg_score = mean(score)) %>% -->
-<!--   print() -->
-<!-- to_compare %>% -->
-<!--   compare_pairs(Worker, avg_score) %>% -->
-<!--   rename(difference = value) %>% -->
-<!--   mutate_if(is.numeric, round, 1) -->
-<!-- ``` -->
-<!-- I use it to compute posterior differences in Bayesian models. For example, let's -->
-<!-- fit a Bayesian model of average sepal length for each species in `iris`. -->
-<!-- ```{r, results = "hide"} -->
-<!-- library(rstanarm) -->
-<!-- m <- stan_glm( -->
-<!--   Sepal.Length ~ Species - 1, -->
-<!--   iris, -->
-<!--   family = gaussian, -->
-<!--   prior = normal(0, 1), -->
-<!--   prior_intercept = normal(0, 1)) -->
-<!-- ``` -->
-<!-- Now, we have a posterior distributions of species means. -->
-<!-- ```{r} -->
-<!-- newdata <- data.frame(Species = unique(iris$Species)) -->
-<!-- p_means <- posterior_linpred(m, newdata = newdata) %>% -->
-<!--   as.data.frame() %>% -->
-<!--   tibble::as_tibble() %>% -->
-<!--   setNames(newdata$Species) %>% -->
-<!--   tibble::rowid_to_column("draw") %>% -->
-<!--   tidyr::gather(species, mean, -draw) %>% -->
-<!--   print() -->
-<!-- ``` -->
-<!-- For each posterior sample, we can compute pairwise differences of means. -->
-<!-- ```{r pairs, fig.width = 4, fig.height = 2.5} -->
-<!-- pair_diffs <- compare_pairs(data, species, mean) %>% -->
-<!--   print() -->
-<!-- library(ggplot2) -->
-<!-- ggplot(pair_diffs) + -->
-<!--   aes(x = pair, y = value) + -->
-<!--   stat_summary(fun.data = median_hilow, geom = "linerange") + -->
-<!--   stat_summary(fun.data = median_hilow, fun.args = list(conf.int = .8), -->
-<!--                size = 2, geom = "linerange") + -->
-<!--   stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") + -->
-<!--   labs(x = NULL, y = "Difference in posterior means") + -->
-<!--   coord_flip() -->
-<!-- ``` -->
+### Pairwise comparisons
+
+`compare_pairs()` compares all pairs of values among levels of a categorical variable. Hmmm, that sounds confusing. Here's an example. We compute the difference in average score between each pair of workers.
+
+``` r
+to_compare <- nlme::Machines %>%
+  group_by(Worker) %>%
+  summarise(avg_score = mean(score)) %>%
+  print()
+#> # A tibble: 6 x 2
+#>   Worker avg_score
+#>    <ord>     <dbl>
+#> 1      6  50.57778
+#> 2      2  57.98889
+#> 3      4  59.57778
+#> 4      1  60.91111
+#> 5      3  66.12222
+#> 6      5  62.72222
+
+to_compare %>%
+  compare_pairs(Worker, avg_score) %>%
+  rename(difference = value) %>%
+  mutate_if(is.numeric, round, 1)
+#> # A tibble: 15 x 2
+#>      pair difference
+#>    <fctr>      <dbl>
+#>  1    1-6       10.3
+#>  2    1-4        1.3
+#>  3    1-2        2.9
+#>  4    2-6        7.4
+#>  5    3-6       15.5
+#>  6    3-4        6.5
+#>  7    3-2        8.1
+#>  8    3-1        5.2
+#>  9    4-6        9.0
+#> 10    4-2        1.6
+#> 11    5-6       12.1
+#> 12    5-4        3.1
+#> 13    5-3       -3.4
+#> 14    5-2        4.7
+#> 15    5-1        1.8
+```
+
 ### Et cetera
 
 `ggpreview()` is like ggplot2's `ggsave()` but it saves an image to a temporary file and then opens it in the system viewer. If you've ever found yourself in a loop of saving a plot, leaving RStudio to doubleclick the file, sighing, going back to RStudio, tweaking the height or width or plot theme, ever so slowly spiraling in on your desired plot, then `ggpreview()` is for you.
+
+`seq_along_rows()` saves a few keystrokes in for-loops that iterate over dataframe rows.
+
+``` r
+cars %>% head(5) %>% seq_along_rows()
+#> [1] 1 2 3 4 5
+cars %>% head(0) %>% seq_along_rows()
+#> integer(0)
+```
+
+More involved demos
+-------------------
+
+These are things that I would have used in the demo above but cut and moved down here to keep that overview succinct.
+
+### Comparing pairs of values over a posterior distribution
+
+I wrote `compare_pairs()` to compute posterior differences in Bayesian models. For the sake of example, let's fit a Bayesian model of average sepal length for each species in `iris`. We could get these estimates more directly using the default dummy-coding of factors, but let's ignore that for now.
+
+``` r
+library(rstanarm)
+#> Loading required package: Rcpp
+#> Warning: package 'Rcpp' was built under R version 3.4.2
+#> rstanarm (Version 2.15.3, packaged: 2017-04-29 06:18:44 UTC)
+#> - Do not expect the default priors to remain the same in future rstanarm versions.
+#> Thus, R scripts should specify priors explicitly, even if they are just the defaults.
+#> - For execution on a local, multicore CPU with excess RAM we recommend calling
+#> options(mc.cores = parallel::detectCores())
+m <- stan_glm(
+  Sepal.Length ~ Species - 1,
+  iris,
+  family = gaussian)
+#> trying deprecated constructor; please alert package maintainer
+```
+
+Now, we have a posterior distribution of species means.
+
+``` r
+newdata <- data.frame(Species = unique(iris$Species))
+
+p_means <- posterior_linpred(m, newdata = newdata) %>%
+  as.data.frame() %>%
+  tibble::as_tibble() %>%
+  setNames(newdata$Species) %>%
+  tibble::rowid_to_column("draw") %>%
+  tidyr::gather(species, mean, -draw) %>%
+  print()
+#> # A tibble: 12,000 x 3
+#>     draw species     mean
+#>    <int>   <chr>    <dbl>
+#>  1     1  setosa 5.004207
+#>  2     2  setosa 4.882626
+#>  3     3  setosa 4.961992
+#>  4     4  setosa 5.031306
+#>  5     5  setosa 4.924585
+#>  6     6  setosa 5.005195
+#>  7     7  setosa 4.949853
+#>  8     8  setosa 4.929618
+#>  9     9  setosa 5.151485
+#> 10    10  setosa 4.911319
+#> # ... with 11,990 more rows
+```
+
+For each posterior sample, we can compute pairwise differences of means with `compare_means()`.
+
+``` r
+pair_diffs <- compare_pairs(p_means, species, mean) %>%
+  print()
+#> # A tibble: 12,000 x 3
+#>     draw              pair     value
+#>    <int>            <fctr>     <dbl>
+#>  1     1 versicolor-setosa 1.0003573
+#>  2     2 versicolor-setosa 1.0478383
+#>  3     3 versicolor-setosa 0.9117396
+#>  4     4 versicolor-setosa 0.9503046
+#>  5     5 versicolor-setosa 0.9941780
+#>  6     6 versicolor-setosa 0.9596996
+#>  7     7 versicolor-setosa 0.9551629
+#>  8     8 versicolor-setosa 0.9983052
+#>  9     9 versicolor-setosa 0.7365404
+#> 10    10 versicolor-setosa 1.1139698
+#> # ... with 11,990 more rows
+
+library(ggplot2)
+
+ggplot(pair_diffs) +
+  aes(x = pair, y = value) +
+  stat_summary(fun.data = median_hilow, geom = "linerange") +
+  stat_summary(fun.data = median_hilow, fun.args = list(conf.int = .8),
+               size = 2, geom = "linerange") +
+  stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") +
+  labs(x = NULL, y = "Difference in posterior means") +
+  coord_flip()
+```
+
+![](man/figures/README-pairs-1.png)
+
+...which should look like the effect ranges in the dummy-coded models.
+
+``` r
+m2 <- update(m, Sepal.Length ~ Species)
+#> trying deprecated constructor; please alert package maintainer
+m3 <- update(m, Sepal.Length ~ Species, 
+             data = iris %>% mutate(Species = forcats::fct_rev(Species)))
+#> trying deprecated constructor; please alert package maintainer
+```
+
+Give or take a few decimals of precision and give or take changes in signs because of changes in who was subtracted from whom.
+
+``` r
+# setosa verus others
+m2 %>% 
+  posterior_interval(regex_pars = "Species") %>% 
+  round(2)
+#>                     5%  95%
+#> Speciesversicolor 0.76 1.10
+#> Speciesvirginica  1.41 1.75
+
+# virginica versus others
+m3 %>% 
+  rstanarm::posterior_interval(regex_pars = "Species") %>% 
+  round(2)
+#>                      5%   95%
+#> Speciesversicolor -0.82 -0.48
+#> Speciessetosa     -1.74 -1.41
+
+# differences from compare_pairs()
+pair_diffs %>% 
+  tidyr::spread(pair, value) %>% 
+  select(-draw) %>% 
+  as.matrix() %>% 
+  posterior_interval() %>% 
+  round(2)
+#>                        5%  95%
+#> versicolor-setosa    0.76 1.10
+#> virginica-versicolor 0.48 0.82
+#> virginica-setosa     1.40 1.75
+```
