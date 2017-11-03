@@ -83,7 +83,7 @@ compare_pairs <- function(data, levels, values, f = `-`) {
     create_pairs()
 
   wide <- data %>%
-    tidyr::spread(data, !! levels, !! values)
+    tidyr::spread(key = !! levels, value = !! values)
 
   for (row_i in seq_len(nrow(pairs))) {
     pair_i <- pairs[row_i, ]

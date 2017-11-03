@@ -47,16 +47,29 @@ test_that("sample_n_of() samples n rows if no groups given", {
 
 
 test_that("compare_pairs() calculates differences in pairs", {
-  testthat::skip("test not finished")
   means <- iris %>%
     dplyr::group_by(Species) %>%
-    summarise(Sepal.Length = mean(Sepal.Length))
-
+    dplyr::summarise(Sepal.Length = mean(Sepal.Length))
 
   result <- compare_pairs(means, Species, Sepal.Length)
 
   by_hand <- tapply(iris$Sepal.Length, iris$Species, mean, simplify = FALSE)
 
+  pairs <- result$pair %>%
+    as.character() %>%
+    strsplit("-") %>%
+    setNames(result$pair)
+
+  for (pair in names(pairs)) {
+    x1 <- pairs[[pair]][1]
+    x2 <- pairs[[pair]][2]
+    by_hand_diff <- by_hand[[x1]] - by_hand[[x2]]
+    diff <- result[result$pair == pair, "value"] %>%
+      unlist(use.names = FALSE) %>%
+      expect_equal(by_hand_diff)
+  }
+
+  # Check pair names
   make_pairs_hard_way <- function(xs) {
     indices <- seq_along(xs)
     heads <- rev(seq_along(xs)[-1])
@@ -67,8 +80,7 @@ test_that("compare_pairs() calculates differences in pairs", {
     }
     results
   }
-  pairs <- make_pairs_hard_way(names(by_hand))
 
-  result
-
+  pair_names <- make_pairs_hard_way(names(by_hand))
+  expect_true(all(pair_names %in% as.character(result$pair)))
 })

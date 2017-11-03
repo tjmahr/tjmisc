@@ -109,50 +109,80 @@ to_compare %>%
   mutate_if(is.numeric, round, 1)
 ```
 
-<!-- I use it to compute posterior differences in Bayesian models. For example, let's -->
-<!-- fit a Bayesian model of average sepal length for each species in `iris`. -->
+I have used it to compute posterior differences in Bayesian models. For the sake
+of example, let's fit a Bayesian model of average sepal length for each species
+in `iris`.
 
-<!-- ```{r, results = "hide"} -->
-<!-- library(rstanarm) -->
-<!-- m <- stan_glm( -->
-<!--   Sepal.Length ~ Species - 1, -->
-<!--   iris, -->
-<!--   family = gaussian, -->
-<!--   prior = normal(0, 1), -->
-<!--   prior_intercept = normal(0, 1)) -->
-<!-- ``` -->
+```{r, results = "hide"}
+library(rstanarm)
+m <- stan_glm(
+  Sepal.Length ~ Species - 1,
+  iris,
+  family = gaussian,
+  prior = normal(0, 1),
+  prior_intercept = normal(0, 1))
+```
 
-<!-- Now, we have a posterior distributions of species means. -->
+Now, we have a posterior distribution of species means.
 
-<!-- ```{r} -->
-<!-- newdata <- data.frame(Species = unique(iris$Species)) -->
+```{r}
+newdata <- data.frame(Species = unique(iris$Species))
 
-<!-- p_means <- posterior_linpred(m, newdata = newdata) %>% -->
-<!--   as.data.frame() %>% -->
-<!--   tibble::as_tibble() %>% -->
-<!--   setNames(newdata$Species) %>% -->
-<!--   tibble::rowid_to_column("draw") %>% -->
-<!--   tidyr::gather(species, mean, -draw) %>% -->
-<!--   print() -->
-<!-- ``` -->
+p_means <- posterior_linpred(m, newdata = newdata) %>%
+  as.data.frame() %>%
+  tibble::as_tibble() %>%
+  setNames(newdata$Species) %>%
+  tibble::rowid_to_column("draw") %>%
+  tidyr::gather(species, mean, -draw) %>%
+  print()
+```
 
-<!-- For each posterior sample, we can compute pairwise differences of means. -->
+For each posterior sample, we can compute pairwise differences of means with
+`compare_means()`.
 
-<!-- ```{r pairs, fig.width = 4, fig.height = 2.5} -->
-<!-- pair_diffs <- compare_pairs(data, species, mean) %>% -->
-<!--   print() -->
+```{r pairs, fig.width = 4, fig.height = 2.5}
+pair_diffs <- compare_pairs(p_means, species, mean) %>%
+  print()
 
-<!-- library(ggplot2) -->
+library(ggplot2)
 
-<!-- ggplot(pair_diffs) + -->
-<!--   aes(x = pair, y = value) + -->
-<!--   stat_summary(fun.data = median_hilow, geom = "linerange") + -->
-<!--   stat_summary(fun.data = median_hilow, fun.args = list(conf.int = .8), -->
-<!--                size = 2, geom = "linerange") + -->
-<!--   stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") + -->
-<!--   labs(x = NULL, y = "Difference in posterior means") + -->
-<!--   coord_flip() -->
-<!-- ``` -->
+ggplot(pair_diffs) +
+  aes(x = pair, y = value) +
+  stat_summary(fun.data = median_hilow, geom = "linerange") +
+  stat_summary(fun.data = median_hilow, fun.args = list(conf.int = .8),
+               size = 2, geom = "linerange") +
+  stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") +
+  labs(x = NULL, y = "Difference in posterior means") +
+  coord_flip()
+```
+
+...which should look like the effect ranges in the dummy-coded models.
+
+```{r, results = "hide"}
+m2 <- update(m, Sepal.Length ~ Species)
+m3 <- update(m, Sepal.Length ~ Species, 
+             data = iris %>% mutate(Species = forcats::fct_rev(Species)))
+```
+
+```{r}
+# setosa verus others
+m2 %>% 
+  posterior_interval(regex_pars = "Species") %>% 
+  round(2)
+
+# virginica versus others
+m3 %>% 
+  rstanarm::posterior_interval(regex_pars = "Species") %>% 
+  round(2)
+
+# differences from compare_pairs()
+pair_diffs %>% 
+  tidyr::spread(pair, value) %>% 
+  select(-draw) %>% 
+  as.matrix() %>% 
+  posterior_interval() %>% 
+  round(2)
+```
 
 
 ### Et cetera
