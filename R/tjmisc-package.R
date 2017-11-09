@@ -21,18 +21,6 @@
 # }
 
 
-# Is x[n] the same as x[n-1]
-is_same_as_last <- function(xs) {
-  same_as_last <- xs == lag(xs)
-  # Overwrite NA (first lag) from lag(xs)
-  same_as_last[1] <- FALSE
-  same_as_last
-}
-
-replace_same_as_last <- function(xs, replacement = "") {
-  xs[is_same_as_last(xs)] <- replacement
-  xs
-}
 
 ## Actually dplyr has stronger versions of these
 # first <- function(...) head(..., n = 1)

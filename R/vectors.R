@@ -1,0 +1,30 @@
+# Vector related helpers
+
+
+
+#' Check for locally repeating values
+#'
+#' @rdname is_same_as_last
+#' @param xs a vector
+#' @param replacement a value used to replace a repeated value. Defaults to
+#'   `""`.
+#' @return `is_same_as_last()` returns TRUE when `xs[n]` the same as `xs[n-1]`.
+#' @export
+#' @examples
+#' xs <- c("a", "a", "a", NA, "b", "b", "c", NA, NA)
+#' is_same_as_last(xs)
+#' replace_if_same_as_last(xs, "")
+is_same_as_last <- function(xs) {
+  same_as_last <- unlist(Map(identical, xs, dplyr::lag(xs)), use.names = FALSE)
+  # Overwrite NA (first lag) from lag(xs)
+  same_as_last[1] <- FALSE
+  same_as_last
+}
+
+
+#' @rdname is_same_as_last
+#' @export
+replace_if_same_as_last <- function(xs, replacement = "") {
+  xs[is_same_as_last(xs)] <- replacement
+  xs
+}

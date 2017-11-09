@@ -3,6 +3,8 @@
 tjmisc
 ======
 
+[![Travis build status](https://travis-ci.org/tjmahr/tjmisc.svg?branch=master)](https://travis-ci.org/tjmahr/tjmisc)
+
 The goal of tjmisc is to gather miscellaneous helper functions, mostly for use in [my dissertation](https://github.com/tjmahr/dissertation).
 
 Apologies in advance. I think "misc" packages are kind of bad because packages should be focused on specific problems: for example, my helper packages for [working on polynomials](https://github.com/tjmahr/polypoly), [printing numbers](https://github.com/tjmahr/printy) or [tidying MCMC samples](https://github.com/tjmahr/tristan). Having modular code snapping together like Lego blocks is better than a grab-bag of functions, it's true, but using `library(helpers)` is much, much better than using `source("helpers.R")`. So here we are... in the grab-bag.
@@ -201,6 +203,31 @@ cars %>% head(5) %>% seq_along_rows()
 cars %>% head(0) %>% seq_along_rows()
 #> integer(0)
 ```
+
+`is_same_as_last` and `replace_if_same_as_last()` are helpers for formatting tables. I use them to replace repeating values in a text column with blanks.
+
+``` r
+mtcars %>% 
+  tibble::rownames_to_column("name") %>% 
+  slice(1:10) %>% 
+  select(cyl, name, mpg) %>% 
+  arrange(cyl, mpg) %>% 
+  mutate_at(c("cyl"), replace_if_same_as_last, "") %>% 
+  knitr::kable()
+```
+
+| cyl | name              |   mpg|
+|:----|:------------------|-----:|
+| 4   | Datsun 710        |  22.8|
+|     | Merc 230          |  22.8|
+|     | Merc 240D         |  24.4|
+| 6   | Valiant           |  18.1|
+|     | Merc 280          |  19.2|
+|     | Mazda RX4         |  21.0|
+|     | Mazda RX4 Wag     |  21.0|
+|     | Hornet 4 Drive    |  21.4|
+| 8   | Duster 360        |  14.3|
+|     | Hornet Sportabout |  18.7|
 
 More involved demos
 -------------------
