@@ -75,14 +75,16 @@ tidy_correlation <- function(data, ..., type = c("pearson", "spearman")) {
 }
 
 #' @export
-tidy_correlation.grouped_df <- function(data, ..., type = c("pearson", "spearman")) {
+tidy_correlation.grouped_df <- function(data, ...,
+                                        type = c("pearson", "spearman")) {
   data %>%
     do(tidy_correlation.default(.data, ..., type = type)) %>%
     ungroup()
 }
 
 #' @export
-tidy_correlation.default <- function(data, ..., type = c("pearson", "spearman")) {
+tidy_correlation.default <- function(data, ...,
+                                     type = c("pearson", "spearman")) {
   select(data, ...) %>%
     as.matrix() %>%
     Hmisc::rcorr(type = type) %>%
