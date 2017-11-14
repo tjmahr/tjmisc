@@ -14,11 +14,14 @@ Imports:
     glue,
     Hmisc,
     magrittr,
+    nlme,
+    purrr,
     rlang,
+    stringi,
+    stringr,
     testthat,
     tibble,
-    tidyr,
-    nlme
+    tidyr
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
