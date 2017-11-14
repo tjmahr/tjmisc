@@ -16,6 +16,7 @@ Imports:
     magrittr,
     nlme,
     purrr,
+    readr,
     rlang,
     stringi,
     stringr,
