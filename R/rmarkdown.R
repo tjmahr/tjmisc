@@ -99,15 +99,13 @@ drop <- function(xs, is) {
   if (length(is) == 0) xs else xs[-is]
 }
 
-
-
 erase_inline_code <- function(lines, replacement = "(`code`)") {
   re_inline_code <- "(`r)( )([^`]+`)"
   stringr::str_replace_all(lines, re_inline_code, replacement)
 }
 
 erase_html_comments <- function(lines) {
-  stringr::str_replace_all(lines, "<--.*-->", "")
+  stringr::str_replace_all(lines, "<!--.*-->", "")
 }
 
 
