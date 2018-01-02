@@ -7,14 +7,14 @@
 \alias{enquo}
 \alias{sym}
 \alias{syms}
-\alias{ensym}
 \alias{expr}
 \alias{exprs}
 \alias{enexpr}
+\alias{quo_name}
 \title{Tidy eval helpers}
 \description{
-These six functions provide tidy eval-compatible ways to capture
-symbols (\code{sym()}, \code{syms()}, \code{ensym()}), expressions (\code{expr()},
+These functions provide tidy eval-compatible ways to capture
+symbols (\code{sym()}, \code{syms()}), expressions (\code{expr()},
 \code{exprs()}, \code{enexpr()}), and quosures (\code{quo()}, \code{quos()}, \code{enquo()}).
 To learn more about tidy eval and how to use these tools, read
 \url{http://rlang.tidyverse.org/articles/tidy-evaluation.html}

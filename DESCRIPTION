@@ -17,7 +17,7 @@ Imports:
     nlme,
     purrr,
     readr,
-    rlang,
+    rlang (>= 0.1.6),
     stringi,
     stringr,
     testthat,
@@ -26,6 +26,5 @@ Imports:
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
-Remotes: tidyverse/rlang
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.0.1.9000
