@@ -34,3 +34,29 @@ test_that("str_which_between() warns for partial matches", {
   matches <- suppressWarnings(str_which_between(lines, "^```"))
   expect_equal(matches, c(1:3, 7:9))
 })
+
+test_that("simplify_rmd_lines() handles html comments", {
+  lines <- c(
+    "```{r}",
+    "```",
+    "",
+    "Here is more code.",
+    "",
+    "1. This is text",
+    "<!-- This is a comment -->",
+    "2. This is text",
+    "<!-- This is a comment -->",
+    "3. This is text")
+
+  expected <- c(
+    "",
+    "Here is more code.",
+    "",
+    "1. This is text",
+    "",
+    "2. This is text",
+    "",
+    "3. This is text")
+
+  expect_equal(simplify_rmd_lines(lines), expected)
+})
