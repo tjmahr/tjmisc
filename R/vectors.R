@@ -27,13 +27,13 @@ replace_if_same_as_last <- function(xs, replacement = "") {
   xs
 }
 
-#' Add a count to the levels of a factor
+#' Add a count to the labels of a factor
 #'
 #' @param xs a factor
 #' @param fmt glue-style format to use. Defaults to `"{levels} ({counts})"`
-#' @param first_fmt glue-style format to use for very first level. Defaults to
-#'   `"{levels} ({counts})"`
-#' @return a factor with the levels updated
+#' @param first_fmt glue-style format to use for very first labels. Defaults to
+#'   value of `fmt`.
+#' @return a factor with the labels updated
 #' @export
 fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = fmt) {
   levels <- names(table(xs))

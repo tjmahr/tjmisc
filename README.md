@@ -250,7 +250,7 @@ mtcars %>%
 | 8   | Duster 360        | 14.3 |
 |     | Hornet Sportabout | 18.7 |
 
-`fct_add_counts()` adds counts to a factor’s levels.
+`fct_add_counts()` adds counts to a factor’s labels.
 
 ``` r
 # Create a factor with some random counts
@@ -270,7 +270,7 @@ random_iris$Species %>% fct_add_counts() %>% levels()
 #> [1] "setosa (84)"     "versicolor (74)" "virginica (92)"
 ```
 
-You can tweak the format for the first level. I like to use this for
+You can tweak the format for the first label. I like to use this for
 plotting by stating the unit next to the first count.
 
 ``` r
