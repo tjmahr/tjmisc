@@ -1,7 +1,5 @@
 # Vector related helpers
 
-
-
 #' Check for locally repeating values
 #'
 #' @rdname is_same_as_last
@@ -27,4 +25,20 @@ is_same_as_last <- function(xs) {
 replace_if_same_as_last <- function(xs, replacement = "") {
   xs[is_same_as_last(xs)] <- replacement
   xs
+}
+
+#' Add a count to the levels of a factor
+#'
+#' @param xs a factor
+#' @param fmt glue-style format to use. Defaults to `"{levels} ({counts})"`
+#' @param first_fmt glue-style format to use for very first level. Defaults to
+#'   `"{levels} ({counts})"`
+#' @return a factor with the levels updated
+#' @export
+fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = "{levels} ({counts})") {
+  levels <- names(table(xs))
+  counts <- unname(table(xs))
+  with_counts <- as.character(glue::glue(fmt))
+  with_counts[1] <- as.character(glue::glue(first_fmt))[1]
+  factor(xs, levels, labels = with_counts)
 }

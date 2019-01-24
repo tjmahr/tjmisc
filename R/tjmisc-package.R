@@ -59,14 +59,6 @@ merge_lists <- function(x, y) {
 }
 
 
-# fct_add_counts <- function(f) {
-#   counts <- forcats::fct_count(f)
-#   counts[["new"]] <- sprintf("%s (%s)", counts[["f"]], counts[["n"]])
-#   x <- setNames(counts[["new"]], counts[["f"]])
-#   forcats::fct_relabel(f, function(level) x[level])
-# }
-
-
 #' Resequence a set of integer indices
 #'
 #' This function is useful for plotting by indices when there are gaps between
