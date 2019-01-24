@@ -11,7 +11,7 @@ fct_add_counts(xs, fmt = "{levels} ({counts})", first_fmt = fmt)
 
 \item{fmt}{glue-style format to use. Defaults to \code{"{levels} ({counts})"}}
 
-\item{first_fmt}{glue-style format to use for very first labels. Defaults to
+\item{first_fmt}{glue-style format to use for very first label. Defaults to
 value of \code{fmt}.}
 }
 \value{

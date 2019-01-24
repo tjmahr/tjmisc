@@ -31,7 +31,7 @@ replace_if_same_as_last <- function(xs, replacement = "") {
 #'
 #' @param xs a factor
 #' @param fmt glue-style format to use. Defaults to `"{levels} ({counts})"`
-#' @param first_fmt glue-style format to use for very first labels. Defaults to
+#' @param first_fmt glue-style format to use for very first label. Defaults to
 #'   value of `fmt`.
 #' @return a factor with the labels updated
 #' @export
