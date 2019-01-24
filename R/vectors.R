@@ -35,7 +35,7 @@ replace_if_same_as_last <- function(xs, replacement = "") {
 #'   `"{levels} ({counts})"`
 #' @return a factor with the levels updated
 #' @export
-fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = "{levels} ({counts})") {
+fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = fmt) {
   levels <- names(table(xs))
   counts <- unname(table(xs))
   with_counts <- as.character(glue::glue(fmt))
