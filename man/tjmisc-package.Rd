@@ -6,7 +6,7 @@
 \alias{tjmisc-package}
 \title{tjmisc: TJ's Miscellany}
 \description{
-This package contains the helper functions used for my dissertation.
+A collection of helper functions.
 }
 \seealso{
 Useful links:

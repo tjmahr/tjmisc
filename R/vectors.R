@@ -27,6 +27,7 @@ replace_if_same_as_last <- function(xs, replacement = "") {
   xs
 }
 
+
 #' Add a count to the labels of a factor
 #'
 #' @param xs a factor

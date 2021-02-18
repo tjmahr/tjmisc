@@ -55,7 +55,8 @@ data <- tibble::tibble(
   day = 1:10 %>% rep(10) %>% sort(),
   id  = 1:10 %>% rep(10),
   block = letters[1:5] %>% rep(10) %>% sort() %>% rep(2),
-  value = rnorm(100) %>% round(2))
+  value = rnorm(100) %>% round(2)
+)
 
 # data from 3 days
 sample_n_of(data, 3, day)
@@ -73,12 +74,14 @@ sample_n_of(data, 2, block, id)
 like to use it to select values for plotting model predictions.
 
 ```{r}
-iris %>% 
-  tidy_quantile(Petal.Length)
+penguins <- palmerpenguins::penguins
 
-iris %>% 
-  group_by(Species) %>% 
-  tidy_quantile(Petal.Length)
+penguins %>% 
+  tidy_quantile(bill_length_mm)
+
+penguins %>% 
+  group_by(species) %>% 
+  tidy_quantile(bill_length_mm)
 ```
 
 ### Tidy correlations
@@ -88,11 +91,12 @@ columns. It accepts `dplyr::select()` selection semantics, and it respects
 grouped dataframes.
 
 ```{r}
-tidy_correlation(iris, -Species)
+penguins %>% 
+  tidy_correlation(bill_length_mm, bill_depth_mm, flipper_length_mm)
 
-iris %>%
-  dplyr::group_by(Species) %>%
-  tidy_correlation(dplyr::starts_with("Petal"))
+penguins %>%
+  dplyr::group_by(species) %>%
+  tidy_correlation(dplyr::ends_with("mm"))
 ```
 
 ### Pairwise comparisons
@@ -110,7 +114,9 @@ to_compare <- nlme::Machines %>%
 to_compare %>%
   compare_pairs(Worker, avg_score) %>%
   rename(difference = value) %>%
-  mutate_if(is.numeric, round, 1)
+  mutate(
+    across(where(is.numeric), round, 1)
+  )
 ```
 
 ### Et cetera
@@ -147,22 +153,22 @@ mtcars %>%
 ```{r}
 # Create a factor with some random counts
 set.seed(20190124)
-random_iris <- iris %>% 
+random_penguins <- penguins %>% 
   dplyr::sample_n(250, replace = TRUE)
 
-table(random_iris$Species)
+table(random_penguins$species)
 
 # Updated factors
-random_iris$Species %>% levels()
-random_iris$Species %>% fct_add_counts() %>% levels()
+random_penguins$species %>% levels()
+random_penguins$species %>% fct_add_counts() %>% levels()
 ```
 
 You can tweak the format for the first label. I like to use this for plotting by
 stating the unit next to the first count. 
 
 ```{r}
-random_iris$Species %>% 
-  fct_add_counts(first_fmt = "{levels} ({counts} flowers)") %>% 
+random_penguins$species %>% 
+  fct_add_counts(first_fmt = "{levels} ({counts} penguins)") %>% 
   levels()
 ```
 
@@ -176,26 +182,28 @@ down here to keep that overview succinct.
 ### Comparing pairs of values over a posterior distribution
 
 I wrote `compare_pairs()` to compute posterior differences in Bayesian models.
-For the sake of example, let's fit a Bayesian model of average sepal length for
-each species in `iris`. We could get these estimates more directly using the default dummy-coding of factors, but let's ignore that for now.
+For the sake of example, let's fit a Bayesian model of average bill length for
+each species in `penguins`. We could get these estimates more directly using the
+default dummy-coding of factors, but let's ignore that for now.
 
 ```{r, results = "hide"}
 library(rstanarm)
 m <- stan_glm(
-  Sepal.Length ~ Species - 1,
-  iris,
-  family = gaussian)
+  bill_length_mm ~ species - 1,
+  penguins,
+  family = gaussian
+)
 ```
 
 Now, we have a posterior distribution of species means.
 
 ```{r}
-newdata <- data.frame(Species = unique(iris$Species))
+newdata <- data.frame(species = unique(penguins$species))
 
 p_means <- posterior_linpred(m, newdata = newdata) %>%
   as.data.frame() %>%
   tibble::as_tibble() %>%
-  setNames(newdata$Species) %>%
+  setNames(newdata$species) %>%
   tibble::rowid_to_column("draw") %>%
   tidyr::gather(species, mean, -draw) %>%
   print()
@@ -223,23 +231,26 @@ ggplot(pair_diffs) +
 ...which should look like the effect ranges in the dummy-coded models.
 
 ```{r, results = "hide"}
-m2 <- update(m, Sepal.Length ~ Species)
-m3 <- update(m, Sepal.Length ~ Species, 
-             data = iris %>% mutate(Species = forcats::fct_rev(Species)))
+m2 <- update(m, bill_length_mm ~ species)
+m3 <- update(
+  m, 
+  bill_length_mm ~ species, 
+  data = penguins %>% mutate(species = forcats::fct_rev(species))
+)
 ```
 
 Give or take a few decimals of precision and give or take changes in signs
 because of changes in who was subtracted from whom.
 
 ```{r}
-# setosa verus others
+# Adelie versus others
 m2 %>% 
-  posterior_interval(regex_pars = "Species") %>% 
+  posterior_interval(regex_pars = "species") %>% 
   round(2)
 
-# virginica versus others
+# Gentoo versus others
 m3 %>% 
-  rstanarm::posterior_interval(regex_pars = "Species") %>% 
+  rstanarm::posterior_interval(regex_pars = "species") %>% 
   round(2)
 
 # differences from compare_pairs()
@@ -250,5 +261,3 @@ pair_diffs %>%
   posterior_interval() %>% 
   round(2)
 ```
-
-

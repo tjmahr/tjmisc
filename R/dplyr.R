@@ -1,6 +1,5 @@
 # Dataframe related helpers
 
-
 #' Create a sequence along the rows of a dataframe
 #' @param data a dataframe
 #' @return a sequence of integers along the rows of a dataframe
@@ -8,6 +7,7 @@
 seq_along_rows <- function(data) {
   seq_len(nrow(data))
 }
+
 
 #' Randomly sample data from n sub-groups of data
 #'
@@ -35,8 +35,8 @@ seq_along_rows <- function(data) {
 #' sample_data %>%
 #'   sample_n_of(10, letter, color)
 sample_n_of <- function(data, size, ...) {
-  rows <- tibble::data_frame(row = seq_len(nrow(data)))
   dots <- quos(...)
+  rows <- tibble::tibble(row = seq_len(nrow(data)))
 
   # Default to sampling rows if no grouping variables set
   if (length(dots) == 0) {
@@ -107,13 +107,12 @@ compare_pairs <- function(data, levels, values, f = `-`) {
 }
 
 
-#' @importFrom utils combn
 create_pairs <- function(xs) {
   if (!is.factor(xs)) xs <- ordered(xs)
   xs %>%
     levels() %>%
     rev() %>%
-    combn(2) %>%
+    utils::combn(2) %>%
     t() %>%
     as.data.frame() %>%
     rlang::set_names("x1", "x2") %>%
@@ -121,5 +120,3 @@ create_pairs <- function(xs) {
     mutate_all(as.character) %>%
     arrange(.data$x1, desc(.data$x2))
 }
-
-

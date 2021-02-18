@@ -24,9 +24,11 @@ contains grouped data, the correlations are computed within each subgroup of
 data.
 }
 \examples{
-tidy_correlation(iris, -Species)
+tidy_correlation(ChickWeight, -Chick, -Diet)
 
-iris \%>\%
-  dplyr::group_by(Species) \%>\%
-  tidy_correlation(dplyr::starts_with("Petal"))
+tidy_correlation(ChickWeight, weight, Time)
+
+ChickWeight \%>\%
+  dplyr::group_by(Diet) \%>\%
+  tidy_correlation(weight, Time)
 }

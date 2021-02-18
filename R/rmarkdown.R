@@ -31,6 +31,7 @@ count_words_in_rmd_file <- function(path) {
     count_words_in_rmd_lines()
 }
 
+
 #' @rdname count_words_in_rmd_file
 #' @export
 count_words_in_rmd_lines <- function(lines) {
@@ -42,6 +43,7 @@ count_words_in_rmd_lines <- function(lines) {
     tibble::as_tibble()
 }
 
+
 #' @rdname count_words_in_rmd_file
 #' @export
 simplify_rmd_lines <- function(lines) {
@@ -52,7 +54,6 @@ simplify_rmd_lines <- function(lines) {
     erase_inline_code() %>%
     erase_html_comments()
 }
-
 
 
 #' Which lines fall in between a delimeter pattern
@@ -90,24 +91,25 @@ str_which_between <- function(string, pattern) {
 }
 
 
-
 drop_which_between <- function(string, pattern) {
   drop(string, str_which_between(string, pattern))
 }
 
+
 drop <- function(xs, is) {
   if (length(is) == 0) xs else xs[-is]
 }
+
 
 erase_inline_code <- function(lines, replacement = "(`code`)") {
   re_inline_code <- "(`r)( )([^`]+`)"
   stringr::str_replace_all(lines, re_inline_code, replacement)
 }
 
+
 erase_html_comments <- function(lines) {
   stringr::str_replace_all(lines, "<!--.*-->", "")
 }
-
 
 
 # Fix cases where an inline code chunk is split across lines
@@ -124,7 +126,5 @@ unwrap_dangling_inline_code <- function(lines) {
   lines
 }
 
-
-
-odd_elements <- function(xs) xs[seq_along(xs) %% 2 == 1]
+odd_elements  <- function(xs) xs[seq_along(xs) %% 2 == 1]
 even_elements <- function(xs) xs[seq_along(xs) %% 2 == 0]

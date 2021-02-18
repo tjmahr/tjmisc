@@ -3,7 +3,7 @@ Package: tjmisc
 Title: TJ's Miscellany
 Version: 0.0.0.9000
 Authors@R: person("TJ", "Mahr", email = "tristan.mahr@gmail.com", role = c("aut", "cre"))
-Description: This package contains the helper functions used for my dissertation.
+Description: A collection of helper functions.
 License: GPL-3
 URL: https://github.com/tjmahr/tjmisc
 BugReports: https://github.com/tjmahr/tjmisc/issues
@@ -22,7 +22,9 @@ Imports:
     stringr,
     testthat,
     tibble,
-    tidyr
+    tidyr,
+    utils,
+    stats
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true

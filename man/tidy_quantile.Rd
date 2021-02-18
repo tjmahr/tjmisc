@@ -22,9 +22,9 @@ contains grouped data, the quantiles are computed within each subgroup of
 data.
 }
 \examples{
-tidy_quantile(iris, Sepal.Length)
+tidy_quantile(sleep, extra)
 
-iris \%>\%
-  dplyr::group_by(Species) \%>\%
-  tidy_quantile(Sepal.Length)
+sleep \%>\%
+  dplyr::group_by(group) \%>\%
+  tidy_quantile(extra)
 }

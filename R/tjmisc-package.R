@@ -1,6 +1,5 @@
 #' @keywords internal
 #' @import dplyr
-#' @importFrom utils modifyList
 "_PACKAGE"
 
 # This is where I put as-yet unsupported helpers.
@@ -30,7 +29,7 @@
 # but_last <- function(...) head(..., n = -1)
 
 length_zero <- function(x) length(x) == 0
-length_one <- function(x) length(x) == 1
+length_one  <- function(x) length(x) == 1
 
 
 # is.error <- function(x) inherits(x, "try-error")
@@ -46,7 +45,10 @@ wrap_with_defaults <- function(func, hard_defaults, soft_defaults) {
     dots <- list(...)
     # overwrite soft defaults with user options
     # then overwrite with hard defaults
-    args <- modifyList(modifyList(soft_defaults, dots), hard_defaults)
+    args <- utils::modifyList(
+      utils::modifyList(soft_defaults, dots),
+      hard_defaults
+    )
     do.call(func, args)
   }
 }

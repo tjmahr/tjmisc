@@ -45,7 +45,8 @@ data <- tibble::tibble(
   day = 1:10 %>% rep(10) %>% sort(),
   id  = 1:10 %>% rep(10),
   block = letters[1:5] %>% rep(10) %>% sort() %>% rep(2),
-  value = rnorm(100) %>% round(2))
+  value = rnorm(100) %>% round(2)
+)
 
 # data from 3 days
 sample_n_of(data, 3, day)
@@ -100,38 +101,40 @@ variable. I like to use it to select values for plotting model
 predictions.
 
 ``` r
-iris %>% 
-  tidy_quantile(Petal.Length)
-#> # A tibble: 5 x 2
-#>   quantile Petal.Length
-#>   <chr>           <dbl>
-#> 1 10%              1.4 
-#> 2 30%              1.7 
-#> 3 50%              4.35
-#> 4 70%              5   
-#> 5 90%              5.8
+penguins <- palmerpenguins::penguins
 
-iris %>% 
-  group_by(Species) %>% 
-  tidy_quantile(Petal.Length)
+penguins %>% 
+  tidy_quantile(bill_length_mm)
+#> # A tibble: 5 x 2
+#>   quantile bill_length_mm
+#>   <chr>             <dbl>
+#> 1 10%                36.6
+#> 2 30%                40.2
+#> 3 50%                44.4
+#> 4 70%                47.4
+#> 5 90%                50.8
+
+penguins %>% 
+  group_by(species) %>% 
+  tidy_quantile(bill_length_mm)
 #> # A tibble: 15 x 3
-#>    Species    quantile Petal.Length
-#>    <fct>      <chr>           <dbl>
-#>  1 setosa     10%              1.3 
-#>  2 setosa     30%              1.4 
-#>  3 setosa     50%              1.5 
-#>  4 setosa     70%              1.5 
-#>  5 setosa     90%              1.7 
-#>  6 versicolor 10%              3.59
-#>  7 versicolor 30%              4   
-#>  8 versicolor 50%              4.35
-#>  9 versicolor 70%              4.5 
-#> 10 versicolor 90%              4.8 
-#> 11 virginica  10%              4.9 
-#> 12 virginica  30%              5.1 
-#> 13 virginica  50%              5.55
-#> 14 virginica  70%              5.8 
-#> 15 virginica  90%              6.31
+#>    species   quantile bill_length_mm
+#>    <fct>     <chr>             <dbl>
+#>  1 Adelie    10%                35.5
+#>  2 Adelie    30%                37.3
+#>  3 Adelie    50%                38.8
+#>  4 Adelie    70%                40.3
+#>  5 Adelie    90%                42.1
+#>  6 Chinstrap 10%                45.2
+#>  7 Chinstrap 30%                46.6
+#>  8 Chinstrap 50%                49.6
+#>  9 Chinstrap 70%                50.8
+#> 10 Chinstrap 90%                52.1
+#> 11 Gentoo    10%                43.5
+#> 12 Gentoo    30%                45.6
+#> 13 Gentoo    50%                47.3
+#> 14 Gentoo    70%                49.1
+#> 15 Gentoo    90%                50.8
 ```
 
 ### Tidy correlations
@@ -141,26 +144,30 @@ dataframe columns. It accepts `dplyr::select()` selection semantics, and
 it respects grouped dataframes.
 
 ``` r
-tidy_correlation(iris, -Species)
-#> # A tibble: 6 x 5
-#>   column1      column2      estimate     n p.value
-#>   <chr>        <chr>           <dbl> <dbl>   <dbl>
-#> 1 Sepal.Width  Sepal.Length   -0.118   150   0.152
-#> 2 Petal.Length Sepal.Length    0.872   150   0    
-#> 3 Petal.Length Sepal.Width    -0.428   150   0    
-#> 4 Petal.Width  Sepal.Length    0.818   150   0    
-#> 5 Petal.Width  Sepal.Width    -0.366   150   0    
-#> 6 Petal.Width  Petal.Length    0.963   150   0
+penguins %>% 
+  tidy_correlation(bill_length_mm, bill_depth_mm, flipper_length_mm)
+#> # A tibble: 3 x 5
+#>   column1           column2        estimate     n p.value
+#>   <chr>             <chr>             <dbl> <dbl>   <dbl>
+#> 1 bill_depth_mm     bill_length_mm   -0.235   342       0
+#> 2 flipper_length_mm bill_length_mm    0.656   342       0
+#> 3 flipper_length_mm bill_depth_mm    -0.584   342       0
 
-iris %>%
-  dplyr::group_by(Species) %>%
-  tidy_correlation(dplyr::starts_with("Petal"))
-#> # A tibble: 3 x 6
-#>   Species    column1     column2      estimate     n p.value
-#>   <fct>      <chr>       <chr>           <dbl> <dbl>   <dbl>
-#> 1 setosa     Petal.Width Petal.Length    0.332    50  0.0186
-#> 2 versicolor Petal.Width Petal.Length    0.787    50  0     
-#> 3 virginica  Petal.Width Petal.Length    0.322    50  0.0225
+penguins %>%
+  dplyr::group_by(species) %>%
+  tidy_correlation(dplyr::ends_with("mm"))
+#> # A tibble: 9 x 6
+#>   species   column1           column2        estimate     n p.value
+#>   <fct>     <chr>             <chr>             <dbl> <dbl>   <dbl>
+#> 1 Adelie    bill_depth_mm     bill_length_mm    0.392   151  0     
+#> 2 Adelie    flipper_length_mm bill_length_mm    0.326   151  0     
+#> 3 Adelie    flipper_length_mm bill_depth_mm     0.308   151  0.0001
+#> 4 Chinstrap bill_depth_mm     bill_length_mm    0.654    68  0     
+#> 5 Chinstrap flipper_length_mm bill_length_mm    0.472    68  0     
+#> 6 Chinstrap flipper_length_mm bill_depth_mm     0.580    68  0     
+#> 7 Gentoo    bill_depth_mm     bill_length_mm    0.643   123  0     
+#> 8 Gentoo    flipper_length_mm bill_length_mm    0.661   123  0     
+#> 9 Gentoo    flipper_length_mm bill_depth_mm     0.707   123  0
 ```
 
 ### Pairwise comparisons
@@ -187,7 +194,9 @@ to_compare <- nlme::Machines %>%
 to_compare %>%
   compare_pairs(Worker, avg_score) %>%
   rename(difference = value) %>%
-  mutate_if(is.numeric, round, 1)
+  mutate(
+    across(where(is.numeric), round, 1)
+  )
 #> # A tibble: 15 x 2
 #>    pair  difference
 #>    <fct>      <dbl>
@@ -259,29 +268,29 @@ mtcars %>%
 ``` r
 # Create a factor with some random counts
 set.seed(20190124)
-random_iris <- iris %>% 
+random_penguins <- penguins %>% 
   dplyr::sample_n(250, replace = TRUE)
 
-table(random_iris$Species)
+table(random_penguins$species)
 #> 
-#>     setosa versicolor  virginica 
-#>         91         88         71
+#>    Adelie Chinstrap    Gentoo 
+#>       108        41       101
 
 # Updated factors
-random_iris$Species %>% levels()
-#> [1] "setosa"     "versicolor" "virginica"
-random_iris$Species %>% fct_add_counts() %>% levels()
-#> [1] "setosa (91)"     "versicolor (88)" "virginica (71)"
+random_penguins$species %>% levels()
+#> [1] "Adelie"    "Chinstrap" "Gentoo"
+random_penguins$species %>% fct_add_counts() %>% levels()
+#> [1] "Adelie (108)"   "Chinstrap (41)" "Gentoo (101)"
 ```
 
 You can tweak the format for the first label. I like to use this for
 plotting by stating the unit next to the first count.
 
 ``` r
-random_iris$Species %>% 
-  fct_add_counts(first_fmt = "{levels} ({counts} flowers)") %>% 
+random_penguins$species %>% 
+  fct_add_counts(first_fmt = "{levels} ({counts} penguins)") %>% 
   levels()
-#> [1] "setosa (91 flowers)" "versicolor (88)"     "virginica (71)"
+#> [1] "Adelie (108 penguins)" "Chinstrap (41)"        "Gentoo (101)"
 ```
 
 ## More involved demos
@@ -293,7 +302,7 @@ moved down here to keep that overview succinct.
 
 I wrote `compare_pairs()` to compute posterior differences in Bayesian
 models. For the sake of example, let’s fit a Bayesian model of average
-sepal length for each species in `iris`. We could get these estimates
+bill length for each species in `penguins`. We could get these estimates
 more directly using the default dummy-coding of factors, but let’s
 ignore that for now.
 
@@ -306,36 +315,37 @@ library(rstanarm)
 #> - For execution on a local, multicore CPU with excess RAM we recommend calling
 #>   options(mc.cores = parallel::detectCores())
 m <- stan_glm(
-  Sepal.Length ~ Species - 1,
-  iris,
-  family = gaussian)
+  bill_length_mm ~ species - 1,
+  penguins,
+  family = gaussian
+)
 ```
 
 Now, we have a posterior distribution of species means.
 
 ``` r
-newdata <- data.frame(Species = unique(iris$Species))
+newdata <- data.frame(species = unique(penguins$species))
 
 p_means <- posterior_linpred(m, newdata = newdata) %>%
   as.data.frame() %>%
   tibble::as_tibble() %>%
-  setNames(newdata$Species) %>%
+  setNames(newdata$species) %>%
   tibble::rowid_to_column("draw") %>%
   tidyr::gather(species, mean, -draw) %>%
   print()
 #> # A tibble: 12,000 x 3
 #>     draw species  mean
 #>    <int> <chr>   <dbl>
-#>  1     1 setosa   5.04
-#>  2     2 setosa   4.96
-#>  3     3 setosa   5.06
-#>  4     4 setosa   4.95
-#>  5     5 setosa   5.06
-#>  6     6 setosa   4.96
-#>  7     7 setosa   5.09
-#>  8     8 setosa   5.05
-#>  9     9 setosa   4.88
-#> 10    10 setosa   4.86
+#>  1     1 Adelie   39.1
+#>  2     2 Adelie   38.9
+#>  3     3 Adelie   38.7
+#>  4     4 Adelie   38.4
+#>  5     5 Adelie   39.2
+#>  6     6 Adelie   38.4
+#>  7     7 Adelie   38.9
+#>  8     8 Adelie   38.7
+#>  9     9 Adelie   38.8
+#> 10    10 Adelie   38.8
 #> # ... with 11,990 more rows
 ```
 
@@ -346,18 +356,18 @@ with `compare_means()`.
 pair_diffs <- compare_pairs(p_means, species, mean) %>%
   print()
 #> # A tibble: 12,000 x 3
-#>     draw pair              value
-#>    <int> <fct>             <dbl>
-#>  1     1 versicolor-setosa 0.919
-#>  2     2 versicolor-setosa 1.00 
-#>  3     3 versicolor-setosa 0.888
-#>  4     4 versicolor-setosa 0.986
-#>  5     5 versicolor-setosa 0.846
-#>  6     6 versicolor-setosa 0.957
-#>  7     7 versicolor-setosa 0.781
-#>  8     8 versicolor-setosa 0.780
-#>  9     9 versicolor-setosa 1.12 
-#> 10    10 versicolor-setosa 1.13 
+#>     draw pair             value
+#>    <int> <fct>            <dbl>
+#>  1     1 Chinstrap-Adelie  9.25
+#>  2     2 Chinstrap-Adelie  9.97
+#>  3     3 Chinstrap-Adelie 10.3 
+#>  4     4 Chinstrap-Adelie 10.5 
+#>  5     5 Chinstrap-Adelie  9.32
+#>  6     6 Chinstrap-Adelie 10.5 
+#>  7     7 Chinstrap-Adelie  9.77
+#>  8     8 Chinstrap-Adelie 10.3 
+#>  9     9 Chinstrap-Adelie  9.12
+#> 10    10 Chinstrap-Adelie 11.0 
 #> # ... with 11,990 more rows
 
 library(ggplot2)
@@ -378,30 +388,33 @@ ggplot(pair_diffs) +
 …which should look like the effect ranges in the dummy-coded models.
 
 ``` r
-m2 <- update(m, Sepal.Length ~ Species)
-m3 <- update(m, Sepal.Length ~ Species, 
-             data = iris %>% mutate(Species = forcats::fct_rev(Species)))
+m2 <- update(m, bill_length_mm ~ species)
+m3 <- update(
+  m, 
+  bill_length_mm ~ species, 
+  data = penguins %>% mutate(species = forcats::fct_rev(species))
+)
 ```
 
 Give or take a few decimals of precision and give or take changes in
 signs because of changes in who was subtracted from whom.
 
 ``` r
-# setosa verus others
+# Adelie versus others
 m2 %>% 
-  posterior_interval(regex_pars = "Species") %>% 
+  posterior_interval(regex_pars = "species") %>% 
   round(2)
-#>                     5%  95%
-#> Speciesversicolor 0.76 1.10
-#> Speciesvirginica  1.41 1.75
+#>                    5%   95%
+#> speciesChinstrap 9.32 10.76
+#> speciesGentoo    8.12  9.30
 
-# virginica versus others
+# Gentoo versus others
 m3 %>% 
-  rstanarm::posterior_interval(regex_pars = "Species") %>% 
+  rstanarm::posterior_interval(regex_pars = "species") %>% 
   round(2)
-#>                      5%   95%
-#> Speciesversicolor -0.82 -0.48
-#> Speciessetosa     -1.75 -1.41
+#>                     5%   95%
+#> speciesChinstrap  0.59  2.07
+#> speciesAdelie    -9.31 -8.12
 
 # differences from compare_pairs()
 pair_diffs %>% 
@@ -410,8 +423,8 @@ pair_diffs %>%
   as.matrix() %>% 
   posterior_interval() %>% 
   round(2)
-#>                        5%  95%
-#> versicolor-setosa    0.76 1.09
-#> virginica-versicolor 0.48 0.82
-#> virginica-setosa     1.41 1.75
+#>                     5%   95%
+#> Chinstrap-Adelie  9.31 10.75
+#> Gentoo-Chinstrap -2.04 -0.59
+#> Gentoo-Adelie     8.15  9.29
 ```

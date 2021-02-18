@@ -1,6 +1,5 @@
 # Custom functions for package testing
 
-
 expect_nrow <- function(object, n) {
   stopifnot(is.numeric(n), length(n) == 1)
   lab <- rlang::expr_label(rlang::enexpr(object))
@@ -15,8 +14,11 @@ expect_nrow <- function(object, n) {
 
   testthat::expect(
     nrow(object) == n,
-    sprintf("%s has %i %s, not %i %s.",
-            lab, nrow(object), has_msg, n, not_msg))
+    sprintf(
+      "%s has %i %s, not %i %s.",
+      lab, nrow(object), has_msg, n, not_msg
+    )
+  )
 
   invisible(object)
 }

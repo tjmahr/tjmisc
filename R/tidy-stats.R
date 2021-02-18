@@ -8,14 +8,13 @@
 #' @param var a column in the dataframe
 #' @param probs quantiles to return. Defaults to `c(.1, .3, .5, .7, .9)`
 #' @return a long dataframe (a tibble) with quantiles for the variable.
-#' @importFrom stats quantile
 #' @export
 #' @examples
-#' tidy_quantile(iris, Sepal.Length)
+#' tidy_quantile(sleep, extra)
 #'
-#' iris %>%
-#'   dplyr::group_by(Species) %>%
-#'   tidy_quantile(Sepal.Length)
+#' sleep %>%
+#'   dplyr::group_by(group) %>%
+#'   tidy_quantile(extra)
 tidy_quantile <- function(data, var, probs = seq(.1, .9, .2)) {
   UseMethod("tidy_quantile")
 }
@@ -24,7 +23,7 @@ tidy_quantile <- function(data, var, probs = seq(.1, .9, .2)) {
 tidy_quantile.default <- function(data, var, probs = seq(.1, .9, .2)) {
   q <- enquo(var)
   rlang::eval_tidy(q, data = data) %>%
-    quantile(probs, na.rm = TRUE) %>%
+    stats::quantile(probs, na.rm = TRUE) %>%
     tibble::enframe("quantile", value = rlang::quo_name(q))
 }
 
@@ -65,18 +64,23 @@ tidy_quantile.grouped_df <- function(data, var, probs = seq(.1, .9, .2)) {
 #'   pair of columns.
 #' @export
 #' @examples
-#' tidy_correlation(iris, -Species)
+#' tidy_correlation(ChickWeight, -Chick, -Diet)
 #'
-#' iris %>%
-#'   dplyr::group_by(Species) %>%
-#'   tidy_correlation(dplyr::starts_with("Petal"))
+#' tidy_correlation(ChickWeight, weight, Time)
+#'
+#' ChickWeight %>%
+#'   dplyr::group_by(Diet) %>%
+#'   tidy_correlation(weight, Time)
 tidy_correlation <- function(data, ..., type = c("pearson", "spearman")) {
   UseMethod("tidy_correlation")
 }
 
 #' @export
-tidy_correlation.grouped_df <- function(data, ...,
-                                        type = c("pearson", "spearman")) {
+tidy_correlation.grouped_df <- function(
+  data,
+  ...,
+  type = c("pearson", "spearman")
+) {
   data %>%
     do(tidy_correlation.default(.data, ..., type = type)) %>%
     ungroup()

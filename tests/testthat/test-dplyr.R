@@ -31,8 +31,10 @@ test_that("sample_n_of() samples from n groups", {
 })
 
 test_that("sample_n_of() warns about sample size", {
-  expect_warning(sample_n_of(sample_data, 40, letter),
-                 regexp = "Sample size.+ is larger than")
+  expect_warning(
+    sample_n_of(sample_data, 40, letter),
+    regexp = "Sample size.+ is larger than"
+  )
 })
 
 test_that("sample_n_of() samples n rows if no groups given", {
@@ -47,13 +49,13 @@ test_that("sample_n_of() samples n rows if no groups given", {
 
 
 test_that("compare_pairs() calculates differences in pairs", {
-  means <- iris %>%
-    dplyr::group_by(Species) %>%
-    dplyr::summarise(Sepal.Length = mean(Sepal.Length))
+  means <- mtcars %>%
+    dplyr::group_by(cyl) %>%
+    dplyr::summarise(mpg  = mean(mpg))
 
-  result <- compare_pairs(means, Species, Sepal.Length)
+  result <- compare_pairs(means, cyl, mpg)
 
-  by_hand <- tapply(iris$Sepal.Length, iris$Species, mean, simplify = FALSE)
+  by_hand <- tapply(mtcars$mpg, mtcars$cyl, mean, simplify = FALSE)
 
   pairs <- result$pair %>%
     as.character() %>%
@@ -89,16 +91,16 @@ test_that("compare_pairs() calculates differences in pairs", {
 
 test_that("seq_along_rows() returns a sequence along dataframe rows", {
   # check lengths
-  iris %>%
+  mtcars %>%
     seq_along_rows() %>%
-    expect_length(nrow(iris))
+    expect_length(nrow(mtcars))
 
-  iris[0, ] %>%
+  mtcars[0, ] %>%
     seq_along_rows() %>%
     expect_length(0)
 
   # check values
-  iris[20:11, ] %>%
+  mtcars[20:11, ] %>%
     seq_along_rows() %>%
     expect_equal(1:10)
 })
