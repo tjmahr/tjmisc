@@ -75,6 +75,7 @@ tidy_correlation <- function(data, ..., type = c("pearson", "spearman")) {
   UseMethod("tidy_correlation")
 }
 
+
 #' @export
 tidy_correlation.grouped_df <- function(
   data,
@@ -82,13 +83,20 @@ tidy_correlation.grouped_df <- function(
   type = c("pearson", "spearman")
 ) {
   data %>%
-    do(tidy_correlation.default(.data, ..., type = type)) %>%
+    summarise(
+      tidy_correlation.default(cur_data_all(), ..., type = type),
+      .groups = "drop"
+    ) %>%
     ungroup()
 }
 
+
 #' @export
-tidy_correlation.default <- function(data, ...,
-                                     type = c("pearson", "spearman")) {
+tidy_correlation.default <- function(
+  data,
+  ...,
+  type = c("pearson", "spearman")
+) {
   select(data, ...) %>%
     as.matrix() %>%
     Hmisc::rcorr(type = type) %>%
@@ -98,4 +106,3 @@ tidy_correlation.default <- function(data, ...,
     mutate_at(c("column1", "column2"), as.character) %>%
     mutate_if(is.numeric, round, 4)
 }
-
