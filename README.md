@@ -3,8 +3,10 @@
 
 # tjmisc
 
-[![Travis build
-status](https://travis-ci.org/tjmahr/tjmisc.svg?branch=master)](https://travis-ci.org/tjmahr/tjmisc)
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/tjmahr/tjmisc/workflows/R-CMD-check/badge.svg)](https://github.com/tjmahr/tjmisc/actions)
+<!-- badges: end -->
 
 The goal of tjmisc is to gather miscellaneous helper functions, mostly
 for use in [my dissertation](https://github.com/tjmahr/dissertation).
@@ -47,19 +49,21 @@ data <- tibble::tibble(
 
 # data from 3 days
 sample_n_of(data, 3, day)
+#> Warning: `data_frame()` was deprecated in tibble 1.1.0.
+#> Please use `tibble()` instead.
 #> # A tibble: 30 x 4
 #>      day    id block value
 #>    <int> <int> <chr> <dbl>
-#>  1     2     1 b      1.01
-#>  2     2     2 b      1.28
-#>  3     2     3 b     -1.4 
-#>  4     2     4 b     -0.46
-#>  5     2     5 b      0.98
-#>  6     2     6 b      2.05
-#>  7     2     7 b      0.11
-#>  8     2     8 b      0.15
-#>  9     2     9 b      0.18
-#> 10     2    10 b     -1.54
+#>  1     1     1 a     -0.51
+#>  2     1     2 a     -0.01
+#>  3     1     3 a     -0.79
+#>  4     1     4 a     -0.74
+#>  5     1     5 a      0.72
+#>  6     1     6 a     -1.17
+#>  7     1     7 a      1.11
+#>  8     1     8 a      1.38
+#>  9     1     9 a     -0.89
+#> 10     1    10 a     -0.06
 #> # ... with 20 more rows
 
 # data from 1 id
@@ -67,26 +71,26 @@ sample_n_of(data, 1, id)
 #> # A tibble: 10 x 4
 #>      day    id block value
 #>    <int> <int> <chr> <dbl>
-#>  1     1     1 a     -0.51
-#>  2     2     1 b      1.01
-#>  3     3     1 c     -0.06
-#>  4     4     1 d      1.14
-#>  5     5     1 e      0.47
-#>  6     6     1 a      0.26
-#>  7     7     1 b      1.15
-#>  8     8     1 c      0.87
-#>  9     9     1 d      0.69
-#> 10    10     1 e      0.64
+#>  1     1     4 a     -0.74
+#>  2     2     4 b     -0.46
+#>  3     3     4 c      1.99
+#>  4     4     4 d     -0.7 
+#>  5     5     4 e     -0.41
+#>  6     6     4 a      0.84
+#>  7     7     4 b     -0.01
+#>  8     8     4 c     -1.49
+#>  9     9     4 d     -0.59
+#> 10    10     4 e     -1.86
 
 # data from 2 block-id pairs
 sample_n_of(data, 2, block, id)
 #> # A tibble: 4 x 4
 #>     day    id block value
 #>   <int> <int> <chr> <dbl>
-#> 1     2     2 b      1.28
-#> 2     4    10 d     -2.81
-#> 3     7     2 b      0.3 
-#> 4     9    10 d     -0.64
+#> 1     3     8 c      0.06
+#> 2     4     5 d     -0.69
+#> 3     8     8 c      2.02
+#> 4     9     5 d     -0.51
 ```
 
 ### Tidy quantiles
@@ -141,22 +145,22 @@ tidy_correlation(iris, -Species)
 #> # A tibble: 6 x 5
 #>   column1      column2      estimate     n p.value
 #>   <chr>        <chr>           <dbl> <dbl>   <dbl>
-#> 1 Sepal.Length Sepal.Width    -0.118   150   0.152
-#> 2 Sepal.Length Petal.Length    0.872   150   0    
-#> 3 Sepal.Width  Petal.Length   -0.428   150   0    
-#> 4 Sepal.Length Petal.Width     0.818   150   0    
-#> 5 Sepal.Width  Petal.Width    -0.366   150   0    
-#> 6 Petal.Length Petal.Width     0.963   150   0
+#> 1 Sepal.Width  Sepal.Length   -0.118   150   0.152
+#> 2 Petal.Length Sepal.Length    0.872   150   0    
+#> 3 Petal.Length Sepal.Width    -0.428   150   0    
+#> 4 Petal.Width  Sepal.Length    0.818   150   0    
+#> 5 Petal.Width  Sepal.Width    -0.366   150   0    
+#> 6 Petal.Width  Petal.Length    0.963   150   0
 
 iris %>%
   dplyr::group_by(Species) %>%
   tidy_correlation(dplyr::starts_with("Petal"))
 #> # A tibble: 3 x 6
-#>   Species    column1      column2     estimate     n p.value
-#>   <fct>      <chr>        <chr>          <dbl> <dbl>   <dbl>
-#> 1 setosa     Petal.Length Petal.Width    0.332    50  0.0186
-#> 2 versicolor Petal.Length Petal.Width    0.787    50  0     
-#> 3 virginica  Petal.Length Petal.Width    0.322    50  0.0225
+#>   Species    column1     column2      estimate     n p.value
+#>   <fct>      <chr>       <chr>           <dbl> <dbl>   <dbl>
+#> 1 setosa     Petal.Width Petal.Length    0.332    50  0.0186
+#> 2 versicolor Petal.Width Petal.Length    0.787    50  0     
+#> 3 virginica  Petal.Width Petal.Length    0.322    50  0.0225
 ```
 
 ### Pairwise comparisons
@@ -172,7 +176,7 @@ to_compare <- nlme::Machines %>%
   print()
 #> # A tibble: 6 x 2
 #>   Worker avg_score
-#>   <ord>      <dbl>
+#> * <ord>      <dbl>
 #> 1 6           50.6
 #> 2 2           58.0
 #> 3 4           59.6
@@ -238,7 +242,7 @@ mtcars %>%
 ```
 
 | cyl | name              |  mpg |
-| :-- | :---------------- | ---: |
+|:----|:------------------|-----:|
 | 4   | Datsun 710        | 22.8 |
 |     | Merc 230          | 22.8 |
 |     | Merc 240D         | 24.4 |
@@ -261,13 +265,13 @@ random_iris <- iris %>%
 table(random_iris$Species)
 #> 
 #>     setosa versicolor  virginica 
-#>         84         74         92
+#>         91         88         71
 
 # Updated factors
 random_iris$Species %>% levels()
 #> [1] "setosa"     "versicolor" "virginica"
 random_iris$Species %>% fct_add_counts() %>% levels()
-#> [1] "setosa (84)"     "versicolor (74)" "virginica (92)"
+#> [1] "setosa (91)"     "versicolor (88)" "virginica (71)"
 ```
 
 You can tweak the format for the first label. I like to use this for
@@ -277,7 +281,7 @@ plotting by stating the unit next to the first count.
 random_iris$Species %>% 
   fct_add_counts(first_fmt = "{levels} ({counts} flowers)") %>% 
   levels()
-#> [1] "setosa (84 flowers)" "versicolor (74)"     "virginica (92)"
+#> [1] "setosa (91 flowers)" "versicolor (88)"     "virginica (71)"
 ```
 
 ## More involved demos
@@ -296,12 +300,11 @@ ignore that for now.
 ``` r
 library(rstanarm)
 #> Loading required package: Rcpp
-#> rstanarm (Version 2.18.2, packaged: 2018-11-08 22:19:38 UTC)
-#> - Do not expect the default priors to remain the same in future rstanarm versions.
-#> Thus, R scripts should specify priors explicitly, even if they are just the defaults.
+#> This is rstanarm version 2.21.1
+#> - See https://mc-stan.org/rstanarm/articles/priors for changes to default priors!
+#> - Default priors may change, so it's safest to specify priors, even if equivalent to the defaults.
 #> - For execution on a local, multicore CPU with excess RAM we recommend calling
-#> options(mc.cores = parallel::detectCores())
-#> - Plotting theme set to bayesplot::theme_default().
+#>   options(mc.cores = parallel::detectCores())
 m <- stan_glm(
   Sepal.Length ~ Species - 1,
   iris,
@@ -323,16 +326,16 @@ p_means <- posterior_linpred(m, newdata = newdata) %>%
 #> # A tibble: 12,000 x 3
 #>     draw species  mean
 #>    <int> <chr>   <dbl>
-#>  1     1 setosa   4.98
-#>  2     2 setosa   4.99
-#>  3     3 setosa   4.95
-#>  4     4 setosa   5.04
-#>  5     5 setosa   5.01
-#>  6     6 setosa   4.93
+#>  1     1 setosa   5.04
+#>  2     2 setosa   4.96
+#>  3     3 setosa   5.06
+#>  4     4 setosa   4.95
+#>  5     5 setosa   5.06
+#>  6     6 setosa   4.96
 #>  7     7 setosa   5.09
-#>  8     8 setosa   5.00
-#>  9     9 setosa   5.08
-#> 10    10 setosa   4.83
+#>  8     8 setosa   5.05
+#>  9     9 setosa   4.88
+#> 10    10 setosa   4.86
 #> # ... with 11,990 more rows
 ```
 
@@ -345,16 +348,16 @@ pair_diffs <- compare_pairs(p_means, species, mean) %>%
 #> # A tibble: 12,000 x 3
 #>     draw pair              value
 #>    <int> <fct>             <dbl>
-#>  1     1 versicolor-setosa 1.01 
-#>  2     2 versicolor-setosa 0.979
-#>  3     3 versicolor-setosa 0.939
-#>  4     4 versicolor-setosa 0.934
-#>  5     5 versicolor-setosa 0.956
-#>  6     6 versicolor-setosa 1.00 
-#>  7     7 versicolor-setosa 0.867
-#>  8     8 versicolor-setosa 0.884
-#>  9     9 versicolor-setosa 0.653
-#> 10    10 versicolor-setosa 1.24 
+#>  1     1 versicolor-setosa 0.919
+#>  2     2 versicolor-setosa 1.00 
+#>  3     3 versicolor-setosa 0.888
+#>  4     4 versicolor-setosa 0.986
+#>  5     5 versicolor-setosa 0.846
+#>  6     6 versicolor-setosa 0.957
+#>  7     7 versicolor-setosa 0.781
+#>  8     8 versicolor-setosa 0.780
+#>  9     9 versicolor-setosa 1.12 
+#> 10    10 versicolor-setosa 1.13 
 #> # ... with 11,990 more rows
 
 library(ggplot2)
@@ -367,6 +370,7 @@ ggplot(pair_diffs) +
   stat_summary(fun.y = median, size = 5, shape = 3, geom = "point") +
   labs(x = NULL, y = "Difference in posterior means") +
   coord_flip()
+#> Warning: `fun.y` is deprecated. Use `fun` instead.
 ```
 
 ![](man/figures/README-pairs-1.png)<!-- -->
@@ -388,8 +392,8 @@ m2 %>%
   posterior_interval(regex_pars = "Species") %>% 
   round(2)
 #>                     5%  95%
-#> Speciesversicolor 0.75 1.09
-#> Speciesvirginica  1.41 1.74
+#> Speciesversicolor 0.76 1.10
+#> Speciesvirginica  1.41 1.75
 
 # virginica versus others
 m3 %>% 
@@ -397,7 +401,7 @@ m3 %>%
   round(2)
 #>                      5%   95%
 #> Speciesversicolor -0.82 -0.48
-#> Speciessetosa     -1.75 -1.40
+#> Speciessetosa     -1.75 -1.41
 
 # differences from compare_pairs()
 pair_diffs %>% 
@@ -407,7 +411,7 @@ pair_diffs %>%
   posterior_interval() %>% 
   round(2)
 #>                        5%  95%
-#> versicolor-setosa    0.75 1.10
+#> versicolor-setosa    0.76 1.09
 #> virginica-versicolor 0.48 0.82
 #> virginica-setosa     1.41 1.75
 ```

@@ -13,8 +13,10 @@ knitr::opts_chunk$set(
 ```
 
 # tjmisc 
-[![Travis build status](https://travis-ci.org/tjmahr/tjmisc.svg?branch=master)](https://travis-ci.org/tjmahr/tjmisc)
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/tjmahr/tjmisc/workflows/R-CMD-check/badge.svg)](https://github.com/tjmahr/tjmisc/actions)
+<!-- badges: end -->
 
 The goal of tjmisc is to gather miscellaneous helper functions, mostly for use 
 in [my dissertation](https://github.com/tjmahr/dissertation). 
