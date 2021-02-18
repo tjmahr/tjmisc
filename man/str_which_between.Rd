@@ -30,6 +30,6 @@ Here is more code.
 ```
 "
 
-lines <- unlist(strsplit(string, "\\n"))
+lines <- unlist(strsplit(string, "\n"))
 str_which_between(lines, "^```")
 }
