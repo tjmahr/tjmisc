@@ -50,8 +50,6 @@ data <- tibble::tibble(
 
 # data from 3 days
 sample_n_of(data, 3, day)
-#> Warning: `data_frame()` was deprecated in tibble 1.1.0.
-#> Please use `tibble()` instead.
 #> # A tibble: 30 x 4
 #>      day    id block value
 #>    <int> <int> <chr> <dbl>
@@ -383,7 +381,7 @@ ggplot(pair_diffs) +
 #> Warning: `fun.y` is deprecated. Use `fun` instead.
 ```
 
-![](man/figures/README-pairs-1.png)<!-- -->
+<img src="man/figures/README-pairs-1.png" width="384" />
 
 …which should look like the effect ranges in the dummy-coded models.
 

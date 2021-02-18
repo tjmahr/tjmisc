@@ -212,7 +212,7 @@ p_means <- posterior_linpred(m, newdata = newdata) %>%
 For each posterior sample, we can compute pairwise differences of means with
 `compare_means()`.
 
-```{r pairs, fig.width = 4, fig.height = 2.5}
+```{r pairs, fig.width = 4, fig.height = 2.5, fig.retina = 2}
 pair_diffs <- compare_pairs(p_means, species, mean) %>%
   print()
 
