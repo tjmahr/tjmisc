@@ -215,6 +215,48 @@ to_compare %>%
 #> 15 5-1          1.8
 ```
 
+### Plotting a matrix
+
+`ggmatplot()` plots the columns of a matrix as individual lines, much
+like `matplot()` in base R.
+
+Here we plot a spline basis matrix for penguin bill length. By default
+it plots the columns with unique row number as the x-axis.
+
+``` r
+# Create a 10-column natural spline bases
+sorted_lengths <- sort(penguins$bill_length_mm)
+length_ns <- splines::ns(sorted_lengths, df = 10)
+ggmatplot(length_ns)
+```
+
+<img src="man/figures/README-matplot-1.png" width="384" />
+
+Alternatively, you can supply a column number and make it the *x* axis.
+In this example, we bind on the original data and use it as the *x*-axis
+column. This makes the lines much smoother because the spline basis was
+built on the bill lengths, not on row numbers.
+
+``` r
+ggmatplot(cbind(sorted_lengths, length_ns), x_axis_column = 1)
+```
+
+<img src="man/figures/README-matplot1-1.png" width="384" />
+
+By default, duplicated rows are removed. We can choose to keep them. The
+little flat steps along the curve are the repeated rows. We can also
+change the number of colors to use.
+
+``` r
+ggmatplot(
+  length_ns, 
+  unique_rows = FALSE, 
+  n_colors = 1
+)
+```
+
+<img src="man/figures/README-matplot2-1.png" width="384" />
+
 ### Et cetera
 
 `ggpreview()` is like ggplot2’s `ggsave()` but it saves an image to a

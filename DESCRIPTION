@@ -24,7 +24,9 @@ Imports:
     tibble,
     tidyr,
     utils,
-    stats
+    stats,
+    reshape2,
+    grDevices
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
