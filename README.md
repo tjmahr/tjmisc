@@ -245,14 +245,13 @@ ggmatplot(cbind(sorted_lengths, length_ns), x_axis_column = 1)
 
 By default, duplicated rows are removed. We can choose to keep them. The
 little flat steps along the curve are the repeated rows. We can also
-change the number of colors to use.
+change the number of colors to use. The package also provides
+`annotate_label_grey()` for making labels on ggplot2’s default grey
+background.
 
 ``` r
-ggmatplot(
-  length_ns, 
-  unique_rows = FALSE, 
-  n_colors = 1
-)
+ggmatplot(length_ns, unique_rows = FALSE, n_colors = 1) + 
+  annotate_label_grey("splines!", 20, .65, size = 5)
 ```
 
 <img src="man/figures/README-matplot2-1.png" width="384" />

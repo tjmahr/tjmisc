@@ -89,3 +89,37 @@ ggmatplot <- function(
     ) +
     labs(title = rlang::expr_label(substitute(x)))
 }
+
+
+#' Annotating plots with a grey background
+#' @param label Text to write on the plot.
+#' @param x,y x and y positions.
+#' @param size,fill,hjust,vjust,label.size Plotting aesthetics that this function handles. They can be overridden.
+#' @param ... Other parameters to pass onto [ggplot2::annotate()]`.`
+#' @return An annotation layer for a ggplot2 plot.
+#' @export
+annotate_label_grey <- function(
+  label,
+  x,
+  y,
+  size = 4,
+  # scales::alpha("grey92", .6),
+  fill = "#EBEBEB99",
+  hjust = 0,
+  vjust = 0,
+  label.size = 0,
+  ...
+) {
+  ggplot2::annotate(
+    "label",
+    x = x,
+    y = y,
+    label = label,
+    size = size,
+    hjust = hjust,
+    vjust = vjust,
+    fill = fill,
+    label.size = label.size,
+    ...
+  )
+}
