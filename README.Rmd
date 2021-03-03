@@ -207,6 +207,30 @@ random_penguins$species %>%
   levels()
 ```
 
+#### Jekyll helpers
+
+I also include functions I use to create and maintain my website.
+`jekyll_create_rmd_draft()` creates a post in the `_R/_drafts` folder.
+
+```{r}
+withr::with_dir(tempdir(), {
+  dir.create("_R")
+  dir.create("_R/_drafts")
+  
+  # Basic use
+  jekyll_create_rmd_draft(slug = "today-i-learned")
+  
+  # Accepts a date
+  jekyll_create_rmd_draft(
+    slug = "yesterday-i-learned", 
+    date = Sys.Date() - 1
+  )
+
+  # Filler text used if slug is not provided
+  jekyll_create_rmd_draft()
+})
+```
+
 
 
 ## More involved demos

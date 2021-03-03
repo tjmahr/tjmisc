@@ -332,6 +332,33 @@ random_penguins$species %>%
 #> [1] "Adelie (108 penguins)" "Chinstrap (41)"        "Gentoo (101)"
 ```
 
+#### Jekyll helpers
+
+I also include functions I use to create and maintain my website.
+`jekyll_create_rmd_draft()` creates a post in the `_R/_drafts` folder.
+
+``` r
+withr::with_dir(tempdir(), {
+  dir.create("_R")
+  dir.create("_R/_drafts")
+  
+  # Basic use
+  jekyll_create_rmd_draft(slug = "today-i-learned")
+  
+  # Accepts a date
+  jekyll_create_rmd_draft(
+    slug = "yesterday-i-learned", 
+    date = Sys.Date() - 1
+  )
+
+  # Filler text used if slug is not provided
+  jekyll_create_rmd_draft()
+})
+#> Creating file: ./_R/_drafts/2021-03-03-today-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-03-02-yesterday-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-03-03-sceptical-joey.Rmd
+```
+
 ## More involved demos
 
 These are things that I would have used in the demo above but cut and
@@ -375,14 +402,14 @@ p_means <- posterior_linpred(m, newdata = newdata) %>%
 #> # A tibble: 12,000 x 3
 #>     draw species  mean
 #>    <int> <chr>   <dbl>
-#>  1     1 Adelie   39.1
-#>  2     2 Adelie   38.9
-#>  3     3 Adelie   38.7
-#>  4     4 Adelie   38.4
-#>  5     5 Adelie   39.2
-#>  6     6 Adelie   38.4
-#>  7     7 Adelie   38.9
-#>  8     8 Adelie   38.7
+#>  1     1 Adelie   38.8
+#>  2     2 Adelie   39.0
+#>  3     3 Adelie   38.8
+#>  4     4 Adelie   38.8
+#>  5     5 Adelie   38.8
+#>  6     6 Adelie   38.7
+#>  7     7 Adelie   38.5
+#>  8     8 Adelie   38.8
 #>  9     9 Adelie   38.8
 #> 10    10 Adelie   38.8
 #> # ... with 11,990 more rows
@@ -397,16 +424,16 @@ pair_diffs <- compare_pairs(p_means, species, mean) %>%
 #> # A tibble: 12,000 x 3
 #>     draw pair             value
 #>    <int> <fct>            <dbl>
-#>  1     1 Chinstrap-Adelie  9.25
-#>  2     2 Chinstrap-Adelie  9.97
-#>  3     3 Chinstrap-Adelie 10.3 
-#>  4     4 Chinstrap-Adelie 10.5 
-#>  5     5 Chinstrap-Adelie  9.32
+#>  1     1 Chinstrap-Adelie 10.2 
+#>  2     2 Chinstrap-Adelie 10.2 
+#>  3     3 Chinstrap-Adelie 10.0 
+#>  4     4 Chinstrap-Adelie 10.7 
+#>  5     5 Chinstrap-Adelie  9.22
 #>  6     6 Chinstrap-Adelie 10.5 
-#>  7     7 Chinstrap-Adelie  9.77
-#>  8     8 Chinstrap-Adelie 10.3 
-#>  9     9 Chinstrap-Adelie  9.12
-#> 10    10 Chinstrap-Adelie 11.0 
+#>  7     7 Chinstrap-Adelie 10.3 
+#>  8     8 Chinstrap-Adelie 10.2 
+#>  9     9 Chinstrap-Adelie  9.83
+#> 10    10 Chinstrap-Adelie  9.89
 #> # ... with 11,990 more rows
 
 library(ggplot2)
@@ -463,7 +490,7 @@ pair_diffs %>%
   posterior_interval() %>% 
   round(2)
 #>                     5%   95%
-#> Chinstrap-Adelie  9.31 10.75
-#> Gentoo-Chinstrap -2.04 -0.59
-#> Gentoo-Adelie     8.15  9.29
+#> Chinstrap-Adelie  9.31 10.76
+#> Gentoo-Chinstrap -2.09 -0.58
+#> Gentoo-Adelie     8.09  9.32
 ```
