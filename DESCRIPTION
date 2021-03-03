@@ -28,7 +28,8 @@ Imports:
     reshape2,
     grDevices,
     rstudioapi,
-    whisker
+    whisker,
+    ids
 ByteCompile: true
 Encoding: UTF-8
 LazyData: true
