@@ -17,6 +17,10 @@ tjm_colors <- list(
   # some album art?
   idk_1 = c("#4A5C50", "#ABAE83", "#CEA9C8", "#D4D3D1", "#F0F0F0", "#FAFAFA"),
   idk_2 = c("#1f8fc1", "#fed531", "#ff6634", "#ff3131", "#191919"),
+  imputation_gold_blue = c(
+    imputed = "#C7A76C",
+    observed = "#7DB0DD"
+  ),
   posterior_on_grey = c(
     fill = c("#EF486899", "#F39B4C99", "#ECD99999"),
     fill_legend = c("#ECE0BA", "#F0B778", "#EF746E"),
