@@ -207,6 +207,20 @@ random_penguins$species %>%
   levels()
 ```
 
+Behind the scenes, `fct_add_counts()` uses the function `fct_glue_labels()` to
+construct labels using a [glue]-templating string. Therefore, `fct_glue_labels()`
+would be a more appropriate function for generic relabeling using glue:
+
+```{r}
+random_penguins$species %>% 
+  fct_glue_labels(
+    fmt = "{tolower(levels)}", 
+    first_fmt = "Species: {tolower(levels)}"
+  ) %>% 
+  levels()
+```
+
+
 #### Jekyll helpers
 
 I also include functions I use to create and maintain my website.
@@ -320,3 +334,5 @@ pair_diffs %>%
   posterior_interval() %>% 
   round(2)
 ```
+
+[glue]: https://glue.tidyverse.org/index.html "glue: Interpreted String Literals"

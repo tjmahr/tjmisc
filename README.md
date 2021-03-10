@@ -181,7 +181,7 @@ to_compare <- nlme::Machines %>%
   print()
 #> # A tibble: 6 x 2
 #>   Worker avg_score
-#> * <ord>      <dbl>
+#>   <ord>      <dbl>
 #> 1 6           50.6
 #> 2 2           58.0
 #> 3 4           59.6
@@ -332,6 +332,22 @@ random_penguins$species %>%
 #> [1] "Adelie (108 penguins)" "Chinstrap (41)"        "Gentoo (101)"
 ```
 
+Behind the scenes, `fct_add_counts()` uses the function
+`fct_glue_labels()` to construct labels using a
+[glue](https://glue.tidyverse.org/index.html "glue: Interpreted String Literals")-templating
+string. Therefore, `fct_glue_labels()` would be a more appropriate
+function for generic relabeling using glue:
+
+``` r
+random_penguins$species %>% 
+  fct_glue_labels(
+    fmt = "{tolower(levels)}", 
+    first_fmt = "Species: {tolower(levels)}"
+  ) %>% 
+  levels()
+#> [1] "Species: adelie" "chinstrap"       "gentoo"
+```
+
 #### Jekyll helpers
 
 I also include functions I use to create and maintain my website.
@@ -354,9 +370,9 @@ withr::with_dir(tempdir(), {
   # Filler text used if slug is not provided
   jekyll_create_rmd_draft()
 })
-#> Creating file: ./_R/_drafts/2021-03-03-today-i-learned.Rmd
-#> Creating file: ./_R/_drafts/2021-03-02-yesterday-i-learned.Rmd
-#> Creating file: ./_R/_drafts/2021-03-03-sceptical-joey.Rmd
+#> Creating file: ./_R/_drafts/2021-03-10-today-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-03-09-yesterday-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-03-10-sceptical-joey.Rmd
 ```
 
 ## More involved demos

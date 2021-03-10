@@ -19,3 +19,28 @@ test_that("replace_if_same_as_last() replaces repeated values", {
     replace_if_same_as_last("") %>%
     expect_equal(c("a", "", "", NA, "b", "", "c", NA, ""))
 })
+
+
+test_that("fct_format() works", {
+  f <- factor(c("A", "B", "B", "C", "C", "C", "D"))
+
+  expect_equal(
+    f %>% fct_add_counts() %>% levels(),
+    c("A (1)", "B (2)", "C (3)", "D (1)")
+  )
+
+  expect_equal(
+    f %>% fct_add_counts(first_fmt = "Level {levels} ({counts})") %>% levels(),
+    c("Level A (1)", "B (2)", "C (3)", "D (1)")
+  )
+
+  expect_equal(
+    f %>% fct_glue_labels(first_fmt = "Level {levels} ({counts})") %>% levels(),
+    c("Level A (1)", "B", "C", "D")
+  )
+  expect_equal(
+    f %>% fct_glue_labels() %>% levels(),
+    f %>% levels()
+  )
+})
+

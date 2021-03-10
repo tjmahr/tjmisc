@@ -28,18 +28,34 @@ replace_if_same_as_last <- function(xs, replacement = "") {
 }
 
 
-#' Add a count to the labels of a factor
+
+#' Format the labels of a factor
 #'
 #' @param xs a factor
-#' @param fmt glue-style format to use. Defaults to `"{levels} ({counts})"`
+#' @param fmt glue-style format to use. Defaults to `"{levels}"` for
+#'   `fct_glue_labels()` and `"{levels} ({counts})"` for `fct_add_counts()`.
 #' @param first_fmt glue-style format to use for very first label. Defaults to
 #'   value of `fmt`.
 #' @return a factor with the labels updated
+#'
+#' @details At this point, only the magic variables `"{levels}"` and
+#'   `"{counts}"` are available ". In principle, others could be defined.
+#'   `fct_add_counts()` is a special case of `fct_glue_labels()`.
+#'
 #' @export
-fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = fmt) {
+#' @rdname fct_glue_labels
+fct_glue_labels <- function(xs, fmt = "{levels}", first_fmt = fmt) {
   levels <- names(table(xs))
   counts <- unname(table(xs))
-  with_counts <- as.character(glue::glue(fmt))
-  with_counts[1] <- as.character(glue::glue(first_fmt))[1]
-  factor(xs, levels, labels = with_counts)
+  labels <- as.character(glue::glue(fmt))
+  labels[1] <- as.character(glue::glue(first_fmt))[1]
+  factor(xs, levels, labels = labels)
 }
+
+
+#' @export
+#' @rdname fct_glue_labels
+fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = fmt) {
+  fct_glue_labels(xs, fmt, first_fmt)
+}
+
