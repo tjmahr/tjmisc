@@ -220,6 +220,19 @@ random_penguins$species %>%
   levels()
 ```
 
+#### Comparing two sets
+
+When I need to merge two datasets together, I have to go through a little dance
+to figure out which elements are in `your_data` and which are in `my_data`.
+`compare_sets()` performs all of R's set operations so I can skim over the
+differences.
+
+```{r}
+your_data <- c(1, 2, 3, 3, 4, 5)
+my_data <- c(4, 4, 4, 5, 6, 7, 8)
+str(compare_sets(your_data, my_data))
+```
+
 
 #### Jekyll helpers
 

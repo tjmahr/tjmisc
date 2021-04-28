@@ -348,6 +348,31 @@ random_penguins$species %>%
 #> [1] "Species: adelie" "chinstrap"       "gentoo"
 ```
 
+#### Comparing two sets
+
+When I need to merge two datasets together, I have to go through a
+little dance to figure out which elements are in `your_data` and which
+are in `my_data`. `compare_sets()` performs all of R’s set operations so
+I can skim over the differences.
+
+``` r
+your_data <- c(1, 2, 3, 3, 4, 5)
+my_data <- c(4, 4, 4, 5, 6, 7, 8)
+str(compare_sets(your_data, my_data))
+#> List of 10
+#>  $ lengths                      : Named int [1:9] 6 7 5 5 1 3 3 2 8
+#>   ..- attr(*, "names")= chr [1:9] "your_data" "my_data" "unique(your_data)" "unique(my_data)" ...
+#>  $ your_data                    : num [1:6] 1 2 3 3 4 5
+#>  $ my_data                      : num [1:7] 4 4 4 5 6 7 8
+#>  $ unique(your_data)            : num [1:5] 1 2 3 4 5
+#>  $ unique(my_data)              : num [1:5] 4 5 6 7 8
+#>  $ setequal(your_data, my_data) : logi FALSE
+#>  $ setdiff(your_data, my_data)  : num [1:3] 1 2 3
+#>  $ setdiff(my_data, your_data)  : num [1:3] 6 7 8
+#>  $ intersect(your_data, my_data): num [1:2] 4 5
+#>  $ union(your_data, my_data)    : num [1:8] 1 2 3 4 5 6 7 8
+```
+
 #### Jekyll helpers
 
 I also include functions I use to create and maintain my website.
@@ -370,9 +395,9 @@ withr::with_dir(tempdir(), {
   # Filler text used if slug is not provided
   jekyll_create_rmd_draft()
 })
-#> Creating file: ./_R/_drafts/2021-03-10-today-i-learned.Rmd
-#> Creating file: ./_R/_drafts/2021-03-09-yesterday-i-learned.Rmd
-#> Creating file: ./_R/_drafts/2021-03-10-sceptical-joey.Rmd
+#> Creating file: ./_R/_drafts/2021-04-28-today-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-04-27-yesterday-i-learned.Rmd
+#> Creating file: ./_R/_drafts/2021-04-28-sceptical-joey.Rmd
 ```
 
 ## More involved demos

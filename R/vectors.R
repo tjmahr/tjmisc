@@ -59,3 +59,41 @@ fct_add_counts <- function(xs, fmt = "{levels} ({counts})", first_fmt = fmt) {
   fct_glue_labels(xs, fmt, first_fmt)
 }
 
+
+
+#' Compare two vectors using R's set operations
+#'
+#' @param x,y vectors to compare
+#' @return a list with `lengths` (the lengths of the other elements), `x`, `y`,
+#'   `unique(x)`, `unique(y)`, `setequal(x, y)`, `setdiff(x, y)`, `setdiff(y,
+#'   x)`, `intersect(x, y)`, `union(x, y)`.
+#' @export
+#' @examples
+#' yours <- c(1, 2, 3, 4, 4)
+#' mine <- c(3, 5, 6, 4)
+#' compare_sets(yours, mine)
+compare_sets <- function(x, y) {
+  .x <- rlang::enexpr(x)
+  .y <- rlang::enexpr(y)
+
+  things_to_do <- list(
+    .x,
+    .y,
+    rlang::expr(unique(!! .x)),
+    rlang::expr(unique(!! .y)),
+    rlang::expr(setequal(!!.x, !! .y)),
+    rlang::expr(  setdiff(!! .x, !! .y)),
+    rlang::expr(  setdiff(!! .y, !! .x)),
+    rlang::expr(intersect(!! .x, !! .y)),
+    rlang::expr(    union(!! .x, !! .y))
+  )
+
+  results <- things_to_do %>%
+    lapply(rlang::eval_tidy) %>%
+    setNames(
+      vapply(things_to_do, rlang::as_label, FUN.VALUE = character(1))
+    )
+
+  c(list(lengths = lengths(results)), results)
+}
+
