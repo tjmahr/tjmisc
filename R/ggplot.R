@@ -83,7 +83,7 @@ ggmatplot <- function(
     geom_line(
       aes(group = .data$.column)
     ) +
-    guides(color = FALSE) +
+    guides(color = "none") +
     scale_color_manual(
       values = unname(grDevices::palette.colors(n_colors, palette = "R4"))
     ) +
