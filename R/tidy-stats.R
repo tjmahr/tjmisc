@@ -43,7 +43,7 @@ tidy_quantile.grouped_df <- function(data, var, probs = seq(.1, .9, .2)) {
     bind_rows(.id = "....id")
 
   groups %>%
-    left_join(quantiles, by = "....id") %>%
+    left_join(quantiles, by = "....id", multiple = "all") %>%
     select(-one_of("....id"))
 }
 
@@ -82,12 +82,20 @@ tidy_correlation.grouped_df <- function(
   ...,
   type = c("pearson", "spearman")
 ) {
-  data %>%
-    summarise(
-      tidy_correlation.default(cur_data_all(), ..., type = type),
-      .groups = "drop"
-    ) %>%
-    ungroup()
+  # We need two sets of columns selected and returned.
+  #
+  # 1. user's variable selection: ...
+  # 2. the grouping columns
+  #
+  # Before reframe(), we select() these columns.
+  #
+  # Inside of reframe(), pick(everything()) selects all the non-grouping
+  # columns, and reframe() returns the grouping columns for us.
+  data |>
+    select(..., group_cols()) |>
+    reframe(
+      tidy_correlation.default(pick(everything()), everything(), type = type)
+    )
 }
 
 
@@ -97,12 +105,16 @@ tidy_correlation.default <- function(
   ...,
   type = c("pearson", "spearman")
 ) {
-  select(data, ...) %>%
-    as.matrix() %>%
-    Hmisc::rcorr(type = type) %>%
-    broom::tidy() %>%
-    tibble::remove_rownames() %>%
-    tibble::as_tibble() %>%
-    mutate_at(c("column1", "column2"), as.character) %>%
-    mutate_if(is.numeric, round, 4)
+  select(data, ...) |>
+    as.matrix() |>
+    Hmisc::rcorr(type = type) |>
+    broom::tidy() |>
+    tibble::remove_rownames() |>
+    tibble::as_tibble() |>
+    mutate(
+      across(
+        .cols = where(is.numeric) & !one_of("column1", "column2"),
+        .fns = function(x) round(x, 4)
+      )
+    )
 }
