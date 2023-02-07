@@ -2,14 +2,21 @@ Type: Package
 Package: tjmisc
 Title: TJ's Miscellany
 Version: 0.0.0.9000
-Authors@R: person("TJ", "Mahr", email = "tristan.mahr@gmail.com", role = c("aut", "cre"))
+Authors@R: 
+    person(
+      given = "Tristan",
+      family = "Mahr",
+      role = c("aut", "cre"),
+      email = "tristan.mahr@wisc.edu",
+      comment = c(ORCID = "0000-0002-8890-5116")
+    )
 Description: A collection of helper functions.
 License: GPL-3
 URL: https://github.com/tjmahr/tjmisc
 BugReports: https://github.com/tjmahr/tjmisc/issues
 Imports: 
     broom,
-    dplyr  (>= 1.1.0),
+    dplyr (>= 1.1.0),
     ggplot2,
     glue,
     Hmisc,
